@@ -1,0 +1,204 @@
+.shop {
+  padding: var(--spacing-12) 0;
+  min-height: 100vh;
+}
+
+.shop-header {
+  margin-bottom: var(--spacing-8);
+}
+
+.shop-header h1 {
+  font-size: var(--text-4xl);
+  margin-bottom: var(--spacing-3);
+}
+
+.shop-header p {
+  color: var(--color-gray-600);
+  font-size: var(--text-lg);
+}
+
+/* Sticky Category Navigation */
+.category-nav-wrapper {
+  position: sticky;
+  top: 70px;
+  z-index: 90;
+  background-color: var(--color-white);
+  border-bottom: 1px solid var(--color-gray-200);
+  margin-bottom: var(--spacing-8);
+  margin-left: calc(-1 * var(--container-padding));
+  margin-right: calc(-1 * var(--container-padding));
+  padding: 0 var(--container-padding);
+}
+
+.category-nav {
+  display: flex;
+  gap: var(--spacing-2);
+  overflow-x: auto;
+  padding: var(--spacing-4) 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.category-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.category-nav-item {
+  padding: var(--spacing-2) var(--spacing-4);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-gray-600);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.category-nav-item:hover {
+  border-color: var(--color-black);
+  color: var(--color-black);
+}
+
+.category-nav-item--active {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border-color: var(--color-black);
+}
+
+/* Toolbar */
+.shop-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-4);
+  margin-bottom: var(--spacing-8);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
+  flex-wrap: wrap;
+}
+
+.search-box-inline {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.search-box-inline input {
+  width: 100%;
+  padding: var(--spacing-3) var(--spacing-4) var(--spacing-3) var(--spacing-10);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-base);
+  font-size: var(--text-base);
+}
+
+.search-box-inline svg {
+  position: absolute;
+  left: var(--spacing-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gray-400);
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.results-count {
+  color: var(--color-gray-600);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.sort-select {
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-base);
+  font-size: var(--text-sm);
+  background-color: var(--color-white);
+  cursor: pointer;
+}
+
+/* Category Sections */
+.shop-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-16);
+}
+
+.category-section {
+  scroll-margin-top: 150px;
+}
+
+.category-title {
+  font-size: var(--text-3xl);
+  font-weight: var(--font-bold);
+  margin-bottom: var(--spacing-6);
+  padding-bottom: var(--spacing-3);
+  border-bottom: 2px solid var(--color-black);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-6);
+}
+
+.no-products {
+  text-align: center;
+  padding: var(--spacing-20) var(--spacing-4);
+}
+
+.no-products p {
+  font-size: var(--text-lg);
+  color: var(--color-gray-600);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 968px) {
+  .category-nav-wrapper {
+    top: 70px;
+  }
+
+  .shop-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box-inline {
+    max-width: 100%;
+  }
+
+  .toolbar-right {
+    justify-content: space-between;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--spacing-4);
+  }
+
+  .category-title {
+    font-size: var(--text-2xl);
+  }
+}
+
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-nav {
+    gap: var(--spacing-1);
+  }
+
+  .category-nav-item {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--text-xs);
+  }
+}
