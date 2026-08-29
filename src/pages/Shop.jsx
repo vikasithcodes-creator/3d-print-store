@@ -1,15 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import ProductCard from '../components/ProductCard';
-import Button from '../components/Button';
-import { products, categories } from '../data/products';
+import { useProducts } from '../context/ProductContext';
 import './Shop.css';
 
 export default function Shop() {
+  const { products, categories } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [filteredProducts, setFilteredProducts] = useState(products);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const categoryRefs = useRef({});
   const observerRef = useRef(null);
@@ -42,7 +41,7 @@ export default function Shop() {
     }
 
     setFilteredProducts(filtered);
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, products]);
 
   // Intersection Observer for scroll-based category highlighting
   useEffect(() => {
@@ -82,7 +81,6 @@ export default function Shop() {
         behavior: 'smooth'
       });
     }
-    setSidebarOpen(false);
   };
 
   // Group products by category

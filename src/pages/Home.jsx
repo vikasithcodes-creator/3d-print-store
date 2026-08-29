@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import { products, categories, getFeaturedProducts } from '../data/products';
+import { useProducts } from '../context/ProductContext';
 import Button from '../components/Button';
 import './Home.css';
 
 export default function Home() {
+  const { products, categories, getFeaturedProducts } = useProducts();
   const featuredProducts = getFeaturedProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
@@ -43,7 +44,7 @@ export default function Home() {
     }
 
     setFilteredProducts(filtered);
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, products]);
 
   // Intersection Observer for scroll-based category highlighting
   useEffect(() => {

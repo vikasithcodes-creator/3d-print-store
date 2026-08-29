@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getProductBySlug, products } from '../data/products';
+import { useProducts } from '../context/ProductContext';
+import { useAdmin } from '../context/AdminContext';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
 import Button from '../components/Button';
@@ -10,12 +11,24 @@ import './ProductDetail.css';
 export default function ProductDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { products, getProductBySlug, updateProduct } = useProducts();
+  const { isAdmin } = useAdmin();
   const product = getProductBySlug(slug);
   const { addToCart } = useCart();
 
-  const [selectedMaterial, setSelectedMaterial] = useState(product?.materials[0] || '');
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0] || '');
+  const [selectedMaterial, setSelectedMaterial] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [isEditingPrice, setIsEditingPrice] = useState(false);
+  const [newPrice, setNewPrice] = useState(product?.price || 0);
+
+  useEffect(() => {
+    if (product) {
+      setSelectedMaterial(product.materials?.[0] || '');
+      setSelectedColor(product.colors?.[0] || '');
+      setNewPrice(product.price);
+    }
+  }, [product]);
 
   if (!product) {
     return (
@@ -31,12 +44,16 @@ export default function ProductDetail() {
     );
   }
 
+  const handleSavePrice = () => {
+    updateProduct(product.id, { price: Number(newPrice) });
+    setIsEditingPrice(false);
+  };
+
   const handleAddToCart = () => {
     addToCart(product, quantity, {
       material: selectedMaterial,
       color: selectedColor
     });
-    // Optional: Show notification or redirect
   };
 
   const handleBuyNow = () => {
@@ -50,6 +67,28 @@ export default function ProductDetail() {
 
   return (
     <div className="product-page">
+      {/* Admin quick toolbar */}
+      {isAdmin && (
+        <div style={{
+          background: '#000',
+          color: '#fff',
+          padding: '10px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '14px'
+        }}>
+          <div>
+            <span>🛠️ <strong>Dev Mode:</strong> {product.name} (ID: {product.id})</span>
+          </div>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Link to="/admin" style={{ color: '#fff', textDecoration: 'underline' }}>
+              Open Admin Dashboard
+            </Link>
+          </div>
+        </div>
+      )}
+
       <div className="container">
         <div className="breadcrumb">
           <Link to="/">Home</Link>
@@ -77,7 +116,52 @@ export default function ProductDetail() {
           <div className="product-details">
             <h1>{product.name}</h1>
 
-            <div className="product-price">{formatPrice(product.price)}</div>
+            <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {isEditingPrice ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>₹</span>
+                  <input
+                    type="number"
+                    value={newPrice}
+                    onChange={(e) => setNewPrice(e.target.value)}
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '20px',
+                      width: '120px',
+                      border: '2px solid #000',
+                      borderRadius: '4px'
+                    }}
+                    autoFocus
+                  />
+                  <button onClick={handleSavePrice} className="btn btn--primary" style={{ padding: '6px 12px' }}>
+                    Save
+                  </button>
+                  <button onClick={() => setIsEditingPrice(false)} className="btn btn--secondary" style={{ padding: '6px 12px' }}>
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <span>{formatPrice(product.price)}</span>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setIsEditingPrice(true)}
+                      style={{
+                        background: '#eee',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        padding: '2px 8px',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                      }}
+                      title="Edit Price (Admin)"
+                    >
+                      ✏️ Edit Price
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
 
             {product.rating && (
               <div className="product-rating">

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useAdmin } from '../context/AdminContext';
 import './Footer.css';
 
 export default function Footer() {
+  const { isAdmin } = useAdmin();
+
   return (
     <footer className="footer">
       <div className="container">
@@ -47,9 +50,23 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <p className="footer-copyright">
-            © {new Date().getFullYear()} SM Studio. All rights reserved.
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <p className="footer-copyright" style={{ margin: 0 }}>
+              © {new Date().getFullYear()} SM Studio. All rights reserved.
+            </p>
+            <Link
+              to="/admin"
+              style={{
+                fontSize: '12px',
+                color: 'var(--color-gray-500, #888)',
+                textDecoration: 'none',
+                opacity: 0.6
+              }}
+              title="Developer Admin Portal"
+            >
+              {isAdmin ? '🛠️ Admin Active' : '🔒 Admin'}
+            </Link>
+          </div>
 
           <div className="social-links">
             <a href="https://instagram.com" className="social-link" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
