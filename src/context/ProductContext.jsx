@@ -43,11 +43,22 @@ export function ProductProvider({ children }) {
     setProducts(prevProducts =>
       prevProducts.map(product => {
         if (product.id === id) {
+          // Ensure arrays remain arrays
+          const ensureArray = (value, fallback) => {
+            if (value === undefined) return fallback;
+            if (Array.isArray(value)) return value;
+            return fallback;
+          };
+
           return {
             ...product,
             ...updatedFields,
             // Ensure numeric price
-            price: updatedFields.price !== undefined ? Number(updatedFields.price) : product.price
+            price: updatedFields.price !== undefined ? Number(updatedFields.price) : product.price,
+            // Ensure arrays are always arrays
+            images: ensureArray(updatedFields.images, product.images || []),
+            materials: ensureArray(updatedFields.materials, product.materials || ['PLA', 'PETG']),
+            colors: ensureArray(updatedFields.colors, product.colors || ['Black', 'White'])
           };
         }
         return product;
@@ -66,6 +77,12 @@ export function ProductProvider({ children }) {
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)/g, '');
 
+    // Ensure arrays are always arrays, never undefined/null
+    const ensureArray = (value, defaultValue) => {
+      if (Array.isArray(value)) return value;
+      return defaultValue;
+    };
+
     const product = {
       id: newId,
       name: newProductData.name || 'New Product',
@@ -73,18 +90,24 @@ export function ProductProvider({ children }) {
       description: newProductData.description || '',
       price: Number(newProductData.price) || 999,
       category: newProductData.category || 'desk-accessories',
-      images: Array.isArray(newProductData.images) && newProductData.images.length > 0
-        ? newProductData.images
-        : ['/products/placeholder.jpg'],
-      materials: newProductData.materials || ['PLA', 'PETG'],
-      colors: newProductData.colors || ['Black', 'White'],
+      images: ensureArray(newProductData.images, []).length > 0
+        ? ensureArray(newProductData.images, [])
+        : [],
+      materials: ensureArray(newProductData.materials, ['PLA', 'PETG']),
+      colors: ensureArray(newProductData.colors, ['Black', 'White']),
       dimensions: newProductData.dimensions || '10cm × 10cm × 10cm',
       printTime: newProductData.printTime || '4-6 hours',
       inStock: newProductData.inStock !== undefined ? newProductData.inStock : true,
       featured: newProductData.featured !== undefined ? newProductData.featured : false,
       rating: newProductData.rating || 5.0,
       reviews: newProductData.reviews || 0,
-      ...newProductData
+      ...newProductData,
+      // Re-apply ensured arrays after spread to guarantee they are always arrays
+      images: ensureArray(newProductData.images, []).length > 0
+        ? ensureArray(newProductData.images, [])
+        : [],
+      materials: ensureArray(newProductData.materials, ['PLA', 'PETG']),
+      colors: ensureArray(newProductData.colors, ['Black', 'White'])
     };
 
     setProducts(prev => [product, ...prev]);

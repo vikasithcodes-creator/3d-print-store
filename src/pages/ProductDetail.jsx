@@ -24,8 +24,12 @@ export default function ProductDetail() {
 
   useEffect(() => {
     if (product) {
-      setSelectedMaterial(product.materials?.[0] || '');
-      setSelectedColor(product.colors?.[0] || '');
+      // Safely get first material/color with fallback
+      const materials = Array.isArray(product.materials) ? product.materials : [];
+      const colors = Array.isArray(product.colors) ? product.colors : [];
+
+      setSelectedMaterial(materials[0] || '');
+      setSelectedColor(colors[0] || '');
       setNewPrice(product.price);
     }
   }, [product]);
@@ -65,6 +69,11 @@ export default function ProductDetail() {
     .filter(p => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
+  // Safely extract arrays with defaults
+  const materials = Array.isArray(product.materials) ? product.materials : [];
+  const colors = Array.isArray(product.colors) ? product.colors : [];
+  const images = Array.isArray(product.images) ? product.images : [];
+
   return (
     <div className="product-page">
       {/* Admin quick toolbar */}
@@ -101,14 +110,17 @@ export default function ProductDetail() {
         <div className="product-layout">
           <div className="product-gallery">
             <div className="main-image">
-              {product.images && product.images[0] ? (
-                <img src={product.images[0]} alt={product.name} />
+              {images.length > 0 && images[0] ? (
+                <img src={images[0]} alt={product.name} />
               ) : (
-                <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
+                <div className="image-placeholder">
+                  <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>No image available</span>
+                </div>
               )}
             </div>
           </div>
@@ -172,13 +184,13 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <p className="product-description">{product.description}</p>
+            <p className="product-description">{product.description || 'No description available.'}</p>
 
-            {product.materials && product.materials.length > 0 && (
+            {materials.length > 0 && (
               <div className="option-group">
                 <label className="option-label">Material</label>
                 <div className="option-buttons">
-                  {product.materials.map(material => (
+                  {materials.map(material => (
                     <button
                       key={material}
                       className={`option-btn ${selectedMaterial === material ? 'option-btn--selected' : ''}`}
@@ -191,11 +203,11 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {product.colors && product.colors.length > 0 && (
+            {colors.length > 0 && (
               <div className="option-group">
                 <label className="option-label">Color</label>
                 <div className="option-buttons">
-                  {product.colors.map(color => (
+                  {colors.map(color => (
                     <button
                       key={color}
                       className={`option-btn ${selectedColor === color ? 'option-btn--selected' : ''}`}
@@ -244,18 +256,24 @@ export default function ProductDetail() {
             <div className="info-section">
               <h2>Specifications</h2>
               <div className="specs-grid">
-                <div className="spec-item">
-                  <div className="spec-label">Dimensions</div>
-                  <div className="spec-value">{product.dimensions}</div>
-                </div>
-                <div className="spec-item">
-                  <div className="spec-label">Print Time</div>
-                  <div className="spec-value">{product.printTime}</div>
-                </div>
-                <div className="spec-item">
-                  <div className="spec-label">Materials</div>
-                  <div className="spec-value">{product.materials.join(', ')}</div>
-                </div>
+                {product.dimensions && (
+                  <div className="spec-item">
+                    <div className="spec-label">Dimensions</div>
+                    <div className="spec-value">{product.dimensions}</div>
+                  </div>
+                )}
+                {product.printTime && (
+                  <div className="spec-item">
+                    <div className="spec-label">Print Time</div>
+                    <div className="spec-value">{product.printTime}</div>
+                  </div>
+                )}
+                {materials.length > 0 && (
+                  <div className="spec-item">
+                    <div className="spec-label">Materials</div>
+                    <div className="spec-value">{materials.join(', ')}</div>
+                  </div>
+                )}
                 <div className="spec-item">
                   <div className="spec-label">Availability</div>
                   <div className="spec-value">{product.inStock ? 'In Stock' : 'Out of Stock'}</div>
@@ -263,13 +281,15 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="info-section">
-              <h2>Shipping Information</h2>
-              <p style={{ color: 'var(--color-gray-700)', lineHeight: 1.7 }}>
-                Production time: {product.printTime}. Orders typically ship within 3-5 business days.
-                Shipping costs calculated at checkout based on location.
-              </p>
-            </div>
+            {product.printTime && (
+              <div className="info-section">
+                <h2>Shipping Information</h2>
+                <p style={{ color: 'var(--color-gray-700)', lineHeight: 1.7 }}>
+                  Production time: {product.printTime}. Orders typically ship within 3-5 business days.
+                  Shipping costs calculated at checkout based on location.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
