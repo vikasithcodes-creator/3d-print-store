@@ -36,7 +36,7 @@ export default function ProductDetail() {
 
   if (!slug) {
     return (
-      <div className="container" style={{ padding: '60px 0', textAlign: 'center' }}>
+      <div className="container page-section" style={{ padding: '60px 0', textAlign: 'center' }}>
         <h1>Product Not Found</h1>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: 'var(--spacing-6)' }}>
           No product identifier was provided.
@@ -48,7 +48,7 @@ export default function ProductDetail() {
 
   if (!product) {
     return (
-      <div className="container" style={{ padding: '60px 0', textAlign: 'center' }}>
+      <div className="container page-section" style={{ padding: '60px 0', textAlign: 'center' }}>
         <h1>Product Not Found</h1>
         <p style={{ color: 'var(--color-gray-600)', marginBottom: 'var(--spacing-6)' }}>
           The product you're looking for doesn't exist.
@@ -87,7 +87,7 @@ export default function ProductDetail() {
   const images = Array.isArray(product.images) ? product.images : [];
 
   return (
-    <div className="product-page">
+    <div className="product-page page-section">
       {/* Admin quick toolbar */}
       {isAdmin && (
         <div style={{
@@ -110,8 +110,8 @@ export default function ProductDetail() {
         </div>
       )}
 
-      <div className="container">
-        <div className="breadcrumb">
+      <div className="container page-section">
+        <div className="breadcrumb page-section">
           <Link to="/">Home</Link>
           <span>/</span>
           <Link to="/shop">Shop</Link>
@@ -119,13 +119,13 @@ export default function ProductDetail() {
           <span>{product.name}</span>
         </div>
 
-        <div className="product-layout">
-          <div className="product-gallery">
-            <div className="main-image">
+        <div className="product-layout page-section">
+          <div className="product-gallery page-section">
+            <div className="main-image page-section">
               {images.length > 0 && images[0] ? (
                 <img src={images[0]} alt={product.name} />
               ) : (
-                <div className="image-placeholder">
+                <div className="image-placeholder page-section">
                   <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                     <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -137,10 +137,10 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="product-details">
+          <div className="product-details page-section">
             <h1>{product.name}</h1>
 
-            <div className="product-price" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="product-price page-section" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               {isEditingPrice ? (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span>₹</span>
@@ -157,10 +157,10 @@ export default function ProductDetail() {
                     }}
                     autoFocus
                   />
-                  <button onClick={handleSavePrice} className="btn btn--primary" style={{ padding: '6px 12px' }}>
+                  <button onClick={handleSavePrice} className="btn btn--primary page-section" style={{ padding: '6px 12px' }}>
                     Save
                   </button>
-                  <button onClick={() => setIsEditingPrice(false)} className="btn btn--secondary" style={{ padding: '6px 12px' }}>
+                  <button onClick={() => setIsEditingPrice(false)} className="btn btn--secondary page-section" style={{ padding: '6px 12px' }}>
                     Cancel
                   </button>
                 </div>
@@ -188,20 +188,20 @@ export default function ProductDetail() {
             </div>
 
             {product.rating && (
-              <div className="product-rating">
-                <span className="stars">★ {product.rating}</span>
+              <div className="product-rating page-section">
+                <span className="stars page-section">★ {product.rating}</span>
                 {product.reviews && (
-                  <span className="review-count">({product.reviews} reviews)</span>
+                  <span className="review-count page-section">({product.reviews} reviews)</span>
                 )}
               </div>
             )}
 
-            <p className="product-description">{product.description || 'No description available.'}</p>
+            <p className="product-description page-section">{product.description || 'No description available.'}</p>
 
             {materials.length > 0 && (
-              <div className="option-group">
-                <label className="option-label">Material</label>
-                <div className="option-buttons">
+              <div className="option-group page-section">
+                <label className="option-label page-section">Material</label>
+                <div className="option-buttons page-section">
                   {materials.map(material => (
                     <button
                       key={material}
@@ -216,9 +216,9 @@ export default function ProductDetail() {
             )}
 
             {colors.length > 0 && (
-              <div className="option-group">
-                <label className="option-label">Color</label>
-                <div className="option-buttons">
+              <div className="option-group page-section">
+                <label className="option-label page-section">Color</label>
+                <div className="option-buttons page-section">
                   {colors.map(color => (
                     <button
                       key={color}
@@ -232,20 +232,20 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <div className="quantity-selector">
-              <span className="quantity-label">Quantity</span>
-              <div className="quantity-controls">
+            <div className="quantity-selector page-section">
+              <span className="quantity-label page-section">Quantity</span>
+              <div className="quantity-controls page-section">
                 <button
-                  className="quantity-btn"
+                  className="quantity-btn page-section"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <line x1="5" y1="12" x2="19" y2="12"/>
                   </svg>
                 </button>
-                <span className="quantity-value">{quantity}</span>
+                <span className="quantity-value page-section">{quantity}</span>
                 <button
-                  className="quantity-btn"
+                  className="quantity-btn page-section"
                   onClick={() => setQuantity(quantity + 1)}
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -256,7 +256,7 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div className="product-actions">
+            <div className="product-actions page-section">
               <Button size="large" fullWidth onClick={handleAddToCart}>
                 Add to Cart
               </Button>
@@ -265,36 +265,36 @@ export default function ProductDetail() {
               </Button>
             </div>
 
-            <div className="info-section">
+            <div className="info-section page-section">
               <h2>Specifications</h2>
-              <div className="specs-grid">
+              <div className="specs-grid page-section">
                 {product.dimensions && (
-                  <div className="spec-item">
-                    <div className="spec-label">Dimensions</div>
-                    <div className="spec-value">{product.dimensions}</div>
+                  <div className="spec-item page-section">
+                    <div className="spec-label page-section">Dimensions</div>
+                    <div className="spec-value page-section">{product.dimensions}</div>
                   </div>
                 )}
                 {product.printTime && (
-                  <div className="spec-item">
-                    <div className="spec-label">Print Time</div>
-                    <div className="spec-value">{product.printTime}</div>
+                  <div className="spec-item page-section">
+                    <div className="spec-label page-section">Print Time</div>
+                    <div className="spec-value page-section">{product.printTime}</div>
                   </div>
                 )}
                 {materials.length > 0 && (
-                  <div className="spec-item">
-                    <div className="spec-label">Materials</div>
-                    <div className="spec-value">{materials.join(', ')}</div>
+                  <div className="spec-item page-section">
+                    <div className="spec-label page-section">Materials</div>
+                    <div className="spec-value page-section">{materials.join(', ')}</div>
                   </div>
                 )}
-                <div className="spec-item">
-                  <div className="spec-label">Availability</div>
-                  <div className="spec-value">{product.inStock ? 'In Stock' : 'Out of Stock'}</div>
+                <div className="spec-item page-section">
+                  <div className="spec-label page-section">Availability</div>
+                  <div className="spec-value page-section">{product.inStock ? 'In Stock' : 'Out of Stock'}</div>
                 </div>
               </div>
             </div>
 
             {product.printTime && (
-              <div className="info-section">
+              <div className="info-section page-section">
                 <h2>Shipping Information</h2>
                 <p style={{ color: 'var(--color-gray-700)', lineHeight: 1.7 }}>
                   Production time: {product.printTime}. Orders typically ship within 3-5 business days.
@@ -306,9 +306,9 @@ export default function ProductDetail() {
         </div>
 
         {relatedProducts.length > 0 && (
-          <div className="related-products">
+          <div className="related-products page-section">
             <h2>Related Products</h2>
-            <div className="product-grid">
+            <div className="product-grid page-section">
               {relatedProducts.map(p => (
                 <ProductCard key={p.id} product={p} />
               ))}

@@ -1,223 +1,42 @@
-.custom-printing {
-  padding: var(--spacing-12) 0;
-  min-height: 100vh;
-}
-
-.custom-hero {
-  text-align: center;
-  margin-bottom: var(--spacing-16);
-}
-
-.custom-hero h1 {
-  font-size: var(--text-5xl);
-  margin-bottom: var(--spacing-4);
-}
-
-.custom-hero p {
-  font-size: var(--text-xl);
-  color: var(--color-gray-600);
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.process-section {
-  margin-bottom: var(--spacing-16);
-}
-
-.process-steps {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--spacing-6);
-  margin-top: var(--spacing-8);
-}
-
-.process-step {
-  text-align: center;
-}
-
-.step-number {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto var(--spacing-4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-black);
-  color: var(--color-white);
-  border-radius: 50%;
-  font-size: var(--text-2xl);
-  font-weight: var(--font-bold);
-}
-
-.process-step h3 {
-  font-size: var(--text-lg);
-  margin-bottom: var(--spacing-2);
-}
-
-.process-step p {
-  color: var(--color-gray-600);
-  font-size: var(--text-sm);
-  margin: 0;
-}
-
-.quote-form-section {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--spacing-8);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-gray-50);
-}
-
-.quote-form-section h2 {
-  font-size: var(--text-3xl);
-  margin-bottom: var(--spacing-6);
-  text-align: center;
-}
-
-.file-upload {
-  margin-bottom: var(--spacing-6);
-}
-
-.upload-area {
-  border: 2px dashed var(--color-gray-300);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-10);
-  text-align: center;
-  cursor: pointer;
-  transition: all var(--transition-base);
-  background-color: var(--color-white);
-}
-
-.upload-area:hover {
-  border-color: var(--color-black);
-  background-color: var(--color-gray-50);
-}
-
-.upload-area svg {
-  margin: 0 auto var(--spacing-4);
-  color: var(--color-gray-400);
-}
-
-.upload-area p {
-  font-size: var(--text-base);
-  color: var(--color-gray-600);
-  margin-bottom: var(--spacing-2);
-}
-
-.upload-area span {
-  font-size: var(--text-sm);
-  color: var(--color-gray-500);
-}
-
-.upload-area input {
-  display: none;
-}
-
-.file-selected {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-3);
-  padding: var(--spacing-4);
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-base);
-  margin-top: var(--spacing-3);
-}
-
-.file-icon {
-  color: var(--color-black);
-}
-
-.file-info {
-  flex: 1;
-}
-
-.file-name {
-  font-weight: var(--font-semibold);
-  margin-bottom: var(--spacing-1);
-}
-
-.file-size {
-  font-size: var(--text-sm);
-  color: var(--color-gray-600);
-}
-
-.remove-file {
-  color: var(--color-gray-500);
-  cursor: pointer;
-  padding: var(--spacing-2);
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-4);
-  margin-bottom: var(--spacing-4);
-}
-
-.form-full {
-  grid-column: 1 / -1;
-}
-
-.textarea-group {
-  margin-bottom: var(--spacing-4);
-}
-
-.textarea {
-  width: 100%;
-  padding: var(--spacing-3) var(--spacing-4);
-  font-size: var(--text-base);
-  color: var(--color-black);
-  background-color: var(--color-white);
-  border: 1px solid var(--color-gray-300);
-  border-radius: var(--radius-base);
-  resize: vertical;
-  min-height: 100px;
-  font-family: inherit;
-}
-
-.textarea:focus {
-  outline: none;
-  border-color: var(--color-black);
-}
-
-.success-message-custom {
-  text-align: center;
-  padding: var(--spacing-12);
-}
-
-.success-message-custom svg {
-  margin: 0 auto var(--spacing-4);
-  color: var(--color-black);
-}
-
-.success-message-custom h3 {
-  font-size: var(--text-2xl);
-  margin-bottom: var(--spacing-3);
-}
-
+.custom-printing { padding: var(--spacing-12) 0; min-height: 100vh; }
+.custom-hero { text-align: center; margin-bottom: var(--spacing-16); }
+.custom-hero h1 { font-size: var(--text-5xl); margin-bottom: var(--spacing-4); }
+.custom-hero p { font-size: var(--text-xl); color: var(--color-gray-600); max-width: 700px; margin: 0 auto; }
+.process-section { margin-bottom: var(--spacing-16); }
+.process-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-6); margin-top: var(--spacing-8); }
+.process-step { text-align: center; }
+.step-number { width: 60px; height: 60px; margin: 0 auto var(--spacing-4); display: flex; align-items: center; justify-content: center; background-color: var(--color-black); color: var(--color-white); border-radius: 50%; font-size: var(--text-2xl); font-weight: var(--font-bold); }
+.process-step h3 { font-size: var(--text-lg); margin-bottom: var(--spacing-2); }
+.process-step p { color: var(--color-gray-600); font-size: var(--text-sm); margin: 0; }
+.quote-form-section { max-width: 800px; margin: 0 auto; padding: var(--spacing-8); border: 1px solid var(--color-gray-200); border-radius: var(--radius-lg); background-color: var(--color-gray-50); }
+.quote-form-section h2 { font-size: var(--text-3xl); margin-bottom: var(--spacing-6); text-align: center; }
+.file-upload { margin-bottom: var(--spacing-6); }
+.upload-area { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-3); border: 2px dashed var(--color-gray-300); border-radius: var(--radius-lg); padding: var(--spacing-10) var(--spacing-4); min-height: 220px; text-align: center; cursor: pointer; transition: all var(--transition-base); background-color: var(--color-white); overflow: hidden; }
+.upload-area:hover { border-color: var(--color-black); background-color: var(--color-gray-50); }
+.upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2; }
+.upload-area svg { margin: 0 auto var(--spacing-4); color: var(--color-gray-400); }
+.upload-area p { font-size: var(--text-base); color: var(--color-gray-600); margin-bottom: var(--spacing-2); }
+.upload-area span { font-size: var(--text-sm); color: var(--color-gray-500); }
+.file-selected { display: flex; align-items: center; gap: var(--spacing-3); padding: var(--spacing-4); background-color: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: var(--radius-base); margin-top: var(--spacing-3); }
+.file-icon { color: var(--color-black); }
+.file-info { flex: 1; }
+.file-name { font-weight: var(--font-semibold); margin-bottom: var(--spacing-1); }
+.file-size { font-size: var(--text-sm); color: var(--color-gray-600); }
+.remove-file { color: var(--color-gray-500); cursor: pointer; padding: var(--spacing-2); }
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-4); }
+.form-full { grid-column: 1 / -1; }
+.textarea-group { margin-bottom: var(--spacing-4); }
+.textarea { width: 100%; padding: var(--spacing-3) var(--spacing-4); font-size: var(--text-base); color: var(--color-black); background-color: var(--color-white); border: 1px solid var(--color-gray-300); border-radius: var(--radius-base); resize: vertical; min-height: 100px; font-family: inherit; }
+.textarea:focus { outline: none; border-color: var(--color-black); }
+.success-message-custom { text-align: center; padding: var(--spacing-12); }
+.success-message-custom svg { margin: 0 auto var(--spacing-4); color: var(--color-black); }
+.success-message-custom h3 { font-size: var(--text-2xl); margin-bottom: var(--spacing-3); }
 @media (max-width: 968px) {
-  .custom-hero h1 {
-    font-size: var(--text-4xl);
-  }
-
-  .process-steps {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-8);
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+  .custom-hero h1 { font-size: var(--text-4xl); }
+  .process-steps { grid-template-columns: 1fr; gap: var(--spacing-8); }
+  .form-grid { grid-template-columns: 1fr; }
 }
-
 @media (max-width: 640px) {
-  .custom-hero h1 {
-    font-size: var(--text-3xl);
-  }
-
-  .custom-hero p {
-    font-size: var(--text-base);
-  }
+  .custom-hero h1 { font-size: var(--text-3xl); }
+  .custom-hero p { font-size: var(--text-base); }
 }

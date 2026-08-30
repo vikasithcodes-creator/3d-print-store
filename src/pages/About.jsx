@@ -2,9 +2,9 @@ import './About.css';
 
 export default function About() {
   return (
-    <div className="about-page">
-      <div className="about-hero">
-        <div className="container">
+    <div className="about-page page-section">
+      <div className="about-hero page-section">
+        <div className="container page-section">
           <h1>About SM Studio</h1>
           <p>
             We're dedicated to delivering precision 3D printing services that bring your ideas to life.
@@ -12,9 +12,9 @@ export default function About() {
         </div>
       </div>
 
-      <div className="container">
-        <div className="about-content">
-          <div className="about-section">
+      <div className="container page-section">
+        <div className="about-content page-section">
+          <div className="about-section page-section">
             <h2>Who We Are</h2>
             <p>
               SM Studio is a specialized 3D printing service committed to quality, precision, and customer satisfaction.
@@ -26,7 +26,7 @@ export default function About() {
             </p>
           </div>
 
-          <div className="about-section">
+          <div className="about-section page-section">
             <h2>What We Do</h2>
             <p>
               We offer two core services: a curated collection of ready-to-order 3D printed products and custom printing
@@ -40,11 +40,11 @@ export default function About() {
             </p>
           </div>
 
-          <div className="about-section">
+          <div className="about-section page-section">
             <h2>Why Choose Us</h2>
-            <div className="values-grid">
-              <div className="value-item">
-                <div className="value-icon">
+            <div className="values-grid page-section">
+              <div className="value-item page-section">
+                <div className="value-icon page-section">
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M12 2L2 7l10 5 10-5-10-5z"/>
                     <path d="M2 17l10 5 10-5"/>
@@ -57,8 +57,8 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="value-item">
-                <div className="value-icon">
+              <div className="value-item page-section">
+                <div className="value-icon page-section">
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
@@ -73,8 +73,8 @@ export default function About() {
                 </p>
               </div>
 
-              <div className="value-item">
-                <div className="value-icon">
+              <div className="value-item page-section">
+                <div className="value-icon page-section">
                   <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                   </svg>
@@ -87,7 +87,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="about-section">
+          <div className="about-section page-section">
             <h2>Our Approach</h2>
             <p>
               We believe 3D printing should be accessible, reliable, and high-quality. That's why we focus on:

@@ -1,11 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { products as defaultProducts, categories as categoriesImport } from '../data/products';
-
-const CATEGORIES_KEY = 'sm_studio_categories_data';
+import { products as defaultProducts, categories } from '../data/products';
 
 const ProductContext = createContext();
 
 const STORAGE_KEY = 'sm_studio_products_data';
+const CATEGORIES_KEY = 'sm_studio_categories_data';
 
 export function useProducts() {
   const context = useContext(ProductContext);
@@ -16,6 +15,30 @@ export function useProducts() {
 }
 
 export function ProductProvider({ children }) {
+  const [categories, setCategories] = useState(() => {
+    try {
+      const saved = localStorage.getItem(CATEGORIES_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load categories from localStorage:', e);
+    }
+    return categories;
+  });
+
+  // Sync categories to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+    } catch (e) {
+      console.error('Failed to save categories:', e);
+    }
+  }, [categories]);
+
   const [products, setProducts] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -126,6 +149,48 @@ export function ProductProvider({ children }) {
     setProducts(prev => prev.filter(product => product.id !== id));
   };
 
+  // Category management
+  const addCategory = (name) => {
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    if (!name || !name.trim()) return false;
+    if (categories.some(c => c.id === slug)) return false;
+    if (categories.some(c => c.name === name.trim())) return false;
+    const newCat = { id: slug, name: name.trim(), slug };
+    setCategories(prev => [...prev, newCat]);
+    return true;
+  };
+
+  const renameCategory = (id, newName) => {
+    if (!newName || !newName.trim() || id === 'all') return false;
+    const trimmed = newName.trim();
+    const newSlug = trimmed.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    if (categories.some(c => c.name === trimmed && c.id !== id)) return false;
+    const oldCat = categories.find(c => c.id === id);
+    if (!oldCat) return false;
+    const updatedCats = categories.map(c => c.id === id ? { ...c, name: trimmed, slug: newSlug || c.slug, id: newSlug || c.id } : c);
+    setCategories(updatedCats);
+    // Rename category in all products
+    setProducts(prev => prev.map(p => p.category === id ? { ...p, category: newSlug || id } : p));
+    return true;
+  };
+
+  const deleteCategory = (id) => {
+    if (id === 'all') return { success: false, reason: 'System filter', assignedCount: 0 };
+    const assigned = products.filter(p => p.category === id).length;
+    if (assigned > 0) return { success: false, reason: 'has-products', assignedCount: assigned };
+    setCategories(prev => prev.filter(c => c.id !== id));
+    return { success: true };
+  };
+
+  const reorderCategories = (orderedIds) => {
+    const ordered = categories.slice().sort((a, b) => {
+      const ia = orderedIds.indexOf(a.id);
+      const ib = orderedIds.indexOf(b.id);
+      return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+    });
+    setCategories(ordered);
+  };
+
   // Reset to default products from products.js
   const resetToDefaults = () => {
     localStorage.removeItem(STORAGE_KEY);
@@ -154,21 +219,12 @@ export function ProductProvider({ children }) {
     return products.filter(p => p.category === category);
   };
 
-  const [categories, setCategories] = useState(() => {
-    try {
-      const saved = localStorage.getItem(CATEGORIES_KEY);
-      if (saved) { const p=JSON.parse(saved); if(Array.isArray(p)&&p.length>0&&p[0]&&typeof p[0].id==='string') return p; }
-    } catch(e){}
-    return categoriesImport || [{id:'all',name:'All Products',slug:'all'},{id:'desk-accessories',name:'Desk Accessories',slug:'desk-accessories'}];
-  });
-  useEffect(() => { try{localStorage.setItem(CATEGORIES_KEY,JSON.stringify(categories));}catch(e){} }, [categories]);
-
   // Export products to formatted JavaScript code for products.js
   const exportToCode = () => {
     const code = `// SM Studio - Product Catalog
 export const products = ${JSON.stringify(products, null, 2)};
 
-export const categories = categories; // state managed; export uses current null, 2)};
+export const categories = ${JSON.stringify(categories, null, 2)};
 
 export function getProductBySlug(slug) {
   return products.find(p => p.slug === slug);
@@ -190,22 +246,16 @@ export function getProductsByCategory(category) {
     return code;
   };
 
-
-  const reorderCategories = (orderedIds) => {
-    const ordered = [...orderedIds].map(id => categories.find(c => c.id === id)).filter(Boolean);
-    setCategories(ordered);
-    localStorage.setItem('sm_studio_categories_data', JSON.stringify(ordered));
-  };
-  const addCategory = (cat) => { setCategories(prev => [...prev, cat]); localStorage.setItem('sm_studio_categories_data', JSON.stringify([...categories, cat])); };
-  const renameCategory = (id, name) => setCategories(prev => prev.map(c => c.id === id ? {...c, name} : c));
-  const deleteCategory = (id) => setCategories(prev => prev.filter(c => c.id !== id));
-
   return (
     <ProductContext.Provider
       value={{
         products,
         categories,
-        updateProduct, addCategory, renameCategory, deleteCategory, reorderCategories,
+        addCategory,
+        renameCategory,
+        deleteCategory,
+        reorderCategories,
+        updateProduct,
         addProduct,
         deleteProduct,
         resetToDefaults,

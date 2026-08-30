@@ -29,7 +29,7 @@
   padding: var(--spacing-12) 0 var(--spacing-20);
   background-color: var(--color-white);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Subtle technical CAD workspace background — fine grid + geometric details */
@@ -125,7 +125,7 @@
 /* Sticky left category sidebar — matches homepage exactly */
 .category-nav-wrapper {
   position: sticky;
-  top: 90px;
+  top: 78px;
   background-color: var(--color-white);
   align-self: start;
 }

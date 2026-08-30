@@ -38,8 +38,8 @@ export default function Checkout() {
 
   if (cart.length === 0 && !orderPlaced) {
     return (
-      <div className="checkout-page">
-        <div className="container">
+      <div className="checkout-page page-section">
+        <div className="container page-section">
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
             <h1>Your cart is empty</h1>
             <p style={{ color: 'var(--color-gray-600)', marginBottom: 'var(--spacing-6)' }}>
@@ -56,10 +56,10 @@ export default function Checkout() {
 
   if (orderPlaced) {
     return (
-      <div className="checkout-page">
-        <div className="container">
-          <div className="success-message">
-            <div className="success-icon">
+      <div className="checkout-page page-section">
+        <div className="container page-section">
+          <div className="success-message page-section">
+            <div className="success-icon page-section">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
@@ -78,13 +78,13 @@ export default function Checkout() {
   }
 
   return (
-    <div className="checkout-page">
-      <div className="container">
+    <div className="checkout-page page-section">
+      <div className="container page-section">
         <h1>Checkout</h1>
 
-        <div className="checkout-layout">
-          <form className="checkout-form" onSubmit={handleSubmit}>
-            <div className="form-section">
+        <div className="checkout-layout page-section">
+          <form className="checkout-form page-section" onSubmit={handleSubmit}>
+            <div className="form-section page-section">
               <h2>Customer Information</h2>
               <Input
                 label="Full Name"
@@ -93,7 +93,7 @@ export default function Checkout() {
                 onChange={handleChange}
                 required
               />
-              <div className="form-row">
+              <div className="form-row page-section">
                 <Input
                   label="Email"
                   type="email"
@@ -113,7 +113,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            <div className="form-section">
+            <div className="form-section page-section">
               <h2>Shipping Address</h2>
               <Input
                 label="Street Address"
@@ -122,7 +122,7 @@ export default function Checkout() {
                 onChange={handleChange}
                 required
               />
-              <div className="form-row">
+              <div className="form-row page-section">
                 <Input
                   label="City"
                   name="city"
@@ -138,7 +138,7 @@ export default function Checkout() {
                   required
                 />
               </div>
-              <div className="form-row">
+              <div className="form-row page-section">
                 <Input
                   label="PIN Code"
                   name="pinCode"
@@ -147,9 +147,9 @@ export default function Checkout() {
                   placeholder="e.g., 110001"
                   required
                 />
-                <div className="input-group">
-                  <label htmlFor="country" className="input-label">
-                    Country<span className="required">*</span>
+                <div className="input-group page-section">
+                  <label htmlFor="country" className="input-label page-section">
+                    Country<span className="required page-section">*</span>
                   </label>
                   <select
                     id="country"
@@ -157,7 +157,7 @@ export default function Checkout() {
                     value={formData.country}
                     onChange={handleChange}
                     required
-                    className="input"
+                    className="input page-section"
                   >
                     <option value="India">India</option>
                     <option value="Other">Other</option>
@@ -171,39 +171,39 @@ export default function Checkout() {
             </Button>
           </form>
 
-          <div className="order-summary-checkout">
+          <div className="order-summary-checkout page-section">
             <h2>Order Summary</h2>
 
-            <div className="order-items">
+            <div className="order-items page-section">
               {cart.map(item => (
-                <div key={item.cartId} className="order-item">
-                  <div className="order-item-image">
+                <div key={item.cartId} className="order-item page-section">
+                  <div className="order-item-image page-section">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                       <rect x="3" y="3" width="18" height="18" rx="2"/>
                     </svg>
                   </div>
-                  <div className="order-item-details">
-                    <div className="order-item-name">{item.name}</div>
-                    <div className="order-item-meta">Qty: {item.quantity}</div>
+                  <div className="order-item-details page-section">
+                    <div className="order-item-name page-section">{item.name}</div>
+                    <div className="order-item-meta page-section">Qty: {item.quantity}</div>
                   </div>
-                  <div className="order-item-price">
+                  <div className="order-item-price page-section">
                     {formatPrice(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="summary-row">
+            <div className="summary-row page-section">
               <span>Subtotal</span>
               <span>{formatPrice(getCartTotal())}</span>
             </div>
 
-            <div className="summary-row">
+            <div className="summary-row page-section">
               <span>Shipping</span>
               <span>Free</span>
             </div>
 
-            <div className="summary-total">
+            <div className="summary-total page-section">
               <span>Total</span>
               <span>{formatPrice(getCartTotal())}</span>
             </div>

@@ -41,9 +41,9 @@ export default function CustomPrinting() {
 
   if (submitted) {
     return (
-      <div className="custom-printing">
-        <div className="container">
-          <div className="success-message-custom">
+      <div className="custom-printing page-section">
+        <div className="container page-section">
+          <div className="success-message-custom page-section">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
@@ -59,9 +59,9 @@ export default function CustomPrinting() {
   }
 
   return (
-    <div className="custom-printing">
-      <div className="container">
-        <div className="custom-hero">
+    <div className="custom-printing page-section">
+      <div className="container page-section">
+        <div className="custom-hero page-section">
           <h1>Have a 3D Model? We'll Print It.</h1>
           <p>
             Upload your own 3D design and we'll bring it to life with precision printing.
@@ -69,42 +69,42 @@ export default function CustomPrinting() {
           </p>
         </div>
 
-        <div className="process-section">
-          <div className="process-steps">
-            <div className="process-step">
-              <div className="step-number">1</div>
+        <div className="process-section page-section">
+          <div className="process-steps page-section">
+            <div className="process-step page-section">
+              <div className="step-number page-section">1</div>
               <h3>Upload Model</h3>
               <p>Upload your STL, OBJ, or 3MF file</p>
             </div>
-            <div className="process-step">
-              <div className="step-number">2</div>
+            <div className="process-step page-section">
+              <div className="step-number page-section">2</div>
               <h3>Choose Options</h3>
               <p>Select material, color, and finish</p>
             </div>
-            <div className="process-step">
-              <div className="step-number">3</div>
+            <div className="process-step page-section">
+              <div className="step-number page-section">3</div>
               <h3>Get Quote</h3>
               <p>Receive a detailed quote within 24h</p>
             </div>
-            <div className="process-step">
-              <div className="step-number">4</div>
+            <div className="process-step page-section">
+              <div className="step-number page-section">4</div>
               <h3>Approve Order</h3>
               <p>Review and confirm your order</p>
             </div>
-            <div className="process-step">
-              <div className="step-number">5</div>
+            <div className="process-step page-section">
+              <div className="step-number page-section">5</div>
               <h3>We Print & Ship</h3>
               <p>Your print is produced and delivered</p>
             </div>
           </div>
         </div>
 
-        <div className="quote-form-section">
+        <div className="quote-form-section page-section">
           <h2>Request a Quote</h2>
 
           <form onSubmit={handleSubmit}>
-            <div className="file-upload">
-              <label className="upload-area" htmlFor="file-upload">
+            <div className="file-upload page-section">
+              <label className="upload-area page-section" htmlFor="file-upload">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="17 8 12 3 7 8"/>
@@ -122,20 +122,20 @@ export default function CustomPrinting() {
               </label>
 
               {file && (
-                <div className="file-selected">
-                  <div className="file-icon">
+                <div className="file-selected page-section">
+                  <div className="file-icon page-section">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
                       <polyline points="13 2 13 9 20 9"/>
                     </svg>
                   </div>
-                  <div className="file-info">
-                    <div className="file-name">{file.name}</div>
-                    <div className="file-size">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
+                  <div className="file-info page-section">
+                    <div className="file-name page-section">{file.name}</div>
+                    <div className="file-size page-section">{(file.size / 1024 / 1024).toFixed(2)} MB</div>
                   </div>
                   <button
                     type="button"
-                    className="remove-file"
+                    className="remove-file page-section"
                     onClick={() => setFile(null)}
                   >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -147,7 +147,7 @@ export default function CustomPrinting() {
               )}
             </div>
 
-            <div className="form-grid">
+            <div className="form-grid page-section">
               <Input
                 label="Quantity"
                 type="number"
@@ -186,22 +186,22 @@ export default function CustomPrinting() {
                 value={formData.finish}
                 onChange={handleChange}
                 placeholder="e.g., Standard, Smooth"
-                className="form-full"
+                className="form-full page-section"
               />
             </div>
 
-            <div className="textarea-group">
-              <label className="input-label">Additional Instructions</label>
+            <div className="textarea-group page-section">
+              <label className="input-label page-section">Additional Instructions</label>
               <textarea
                 name="instructions"
                 value={formData.instructions}
                 onChange={handleChange}
                 placeholder="Any special requirements or notes about your print..."
-                className="textarea"
+                className="textarea page-section"
               />
             </div>
 
-            <div className="form-grid">
+            <div className="form-grid page-section">
               <Input
                 label="Full Name"
                 name="name"
@@ -224,7 +224,7 @@ export default function CustomPrinting() {
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="form-full"
+                className="form-full page-section"
               />
             </div>
 

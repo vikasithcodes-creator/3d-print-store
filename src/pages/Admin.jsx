@@ -4,12 +4,17 @@ import { useProducts } from '../context/ProductContext';
 import { formatPrice } from '../utils/format';
 import './Admin.css';
 
+import { uploadToCloudinary } from '../utils/uploadImage';
 export default function Admin() {
   const { isAdmin, login, logout } = useAdmin();
   const {
     products,
     categories,
     updateProduct,
+    addCategory,
+    renameCategory,
+    deleteCategory,
+    reorderCategories,
     addProduct,
     deleteProduct,
     resetToDefaults,
@@ -27,6 +32,7 @@ export default function Admin() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterStock, setFilterStock] = useState('all');
   const [filterFeatured, setFilterFeatured] = useState('all');
+  const [tab, setTab] = useState('products');
 
   // Track form changes
   useEffect(() => {
@@ -251,7 +257,8 @@ export default function Admin() {
       </div>
 
       {/* Stats Cards */}
-      <div className="admin-stats">
+      {tab === 'products' && (
+        <div className="admin-stats">
         <div className="stat-card">
           <div className="stat-value">{products.length}</div>
           <div className="stat-label">Total Products</div>
@@ -269,6 +276,7 @@ export default function Admin() {
           <div className="stat-label">Categories</div>
         </div>
       </div>
+      )}
 
       {/* Toolbar */}
       <div className="admin-toolbar">
@@ -281,7 +289,19 @@ export default function Admin() {
             Export products.js
           </button>
         </div>
-        <div className="admin-toolbar-secondary">
+        <div className="admin-toolbar-secondary" style={{ display: 'flex', gap: 'var(--spacing-2)' }}>
+          <button
+            onClick={() => setTab('products')}
+            className={tab === 'products' ? 'btn btn--primary' : 'btn btn--secondary'}
+          >
+            Products
+          </button>
+          <button
+            onClick={() => setTab('categories')}
+            className={tab === 'categories' ? 'btn btn--primary' : 'btn btn--secondary'}
+          >
+            Categories
+          </button>
           <button
             onClick={() => {
               if (window.confirm('Reset all products to defaults?\n\nAll your changes will be lost. This cannot be undone.')) {
@@ -296,6 +316,7 @@ export default function Admin() {
       </div>
 
       {/* Filters */}
+      {tab === 'products' && (
       <div className="admin-filters">
         <div className="filter-search">
           <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="search-icon">
@@ -340,15 +361,43 @@ export default function Admin() {
           </select>
         </div>
       </div>
+      )}
 
       {/* Results count */}
+      {tab === 'products' && (
       <div className="admin-results">
         <p className="results-text">
           Showing {filteredProducts.length} of {products.length} products
         </p>
       </div>
+      )}
+
+
+      {/* Category Manager */}
+      {tab === 'categories' && (
+      <div className="admin-categories" style={{maxWidth:'1400px', margin:'0 auto 32px', padding:'0 32px'}}>
+        <div style={{border:'1px solid var(--color-gray-200)', borderRadius:'var(--radius-lg)', background:'#fff', padding:'var(--spacing-4) var(--spacing-6)'}}>
+          <h3 style={{fontSize:'1.25rem', fontWeight:700, marginBottom:'var(--spacing-4)'}}>Category Manager</h3>
+          <div style={{display:'flex', flexDirection:'column', gap:'var(--spacing-2)'}}>
+            {categories.map((cat, idx) => (
+              <div key={cat.id} draggable={cat.id !== 'all'} onDragStart={e => { if(cat.id!=='all'){e.dataTransfer.setData('text/plain',cat.id); e.dataTransfer.effectAllowed='move';}}} onDragOver={e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; }} onDrop={e => { e.preventDefault(); const src=e.dataTransfer.getData('text/plain'); if(src && src!==cat.id && src!=='all'){ const ids=categories.map(c=>c.id); const sIdx=ids.indexOf(src); const tIdx=ids.indexOf(cat.id); if(sIdx>-1&&tIdx>-1){ const newIds=[...ids]; newIds.splice(sIdx,1); const insertAt=src==='all'?0:Math.max(1,tIdx); newIds.splice(insertAt,0,src); reorderCategories(newIds);}}}} style={{display:'flex', alignItems:'center', gap:'var(--spacing-3)', padding:'var(--spacing-2) var(--spacing-3)', border:'1px solid var(--color-gray-200)', borderRadius:'var(--radius-base)', background: cat.id==='all'?'var(--color-black)':'transparent', color: cat.id==='all'?'#fff':'inherit', cursor: cat.id==='all'?'default':'grab'}}>
+                <span style={{cursor:cat.id==='all'?'default':'grab', fontSize:'1.2rem', userSelect:'none'}} draggable={false} onMouseDown={e=>e.stopPropagation()}>≡</span>
+                <span style={{flex:1, fontWeight:500}}>{cat.name}</span>
+                <span style={{fontSize:'0.75rem', color:'#999'}}>{cat.id}</span>
+                {cat.id !== 'all' && <button onClick={(e)=>{e.stopPropagation(); if(window.confirm('Delete "'+cat.name+'"?')) deleteCategory(cat.id);}} style={{padding:'2px 6px', fontSize:'0.75rem'}} title="Delete">✕</button>}
+              </div>
+            ))}
+          </div>
+          <div style={{marginTop:'var(--spacing-4)', display:'flex', gap:'var(--spacing-2)'}}>
+            <input id="new-cat-name" placeholder="New category name" style={{flex:1,padding:'var(--spacing-2)', border:'1px solid var(--color-gray-300)', borderRadius:'var(--radius-base)'}} />
+            <button onClick={()=>{const v=document.getElementById('new-cat-name').value.trim(); if(v){ const s=v.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); addCategory({id:s||'cat-'+Date.now(),name:v,slug:s||'cat-'+Date.now()}); document.getElementById('new-cat-name').value='';}}} style={{padding:'var(--spacing-2) var(--spacing-3)'}}>Add Category</button>
+          </div>
+        </div>
+      </div>
+      )}
 
       {/* Products Table */}
+      {tab === 'products' && (
       <div className="admin-products-table">
         <table>
           <thead>
@@ -442,6 +491,7 @@ export default function Admin() {
           </tbody>
         </table>
       </div>
+      )}
 
       {/* Edit/Add Product Modal */}
       {showEditModal && editingProduct && (

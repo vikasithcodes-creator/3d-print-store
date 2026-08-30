@@ -167,6 +167,58 @@ ul, ol {
   list-style: none;
 }
 
+/* Page Grid Background — shared across all customer-facing pages */
+.page-section {
+  position: relative;
+  overflow: visible;
+  background-color: var(--color-white);
+}
+
+.page-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.028) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center center;
+  opacity: 0.7;
+}
+
+.page-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 160px 160px;
+  background-position: center center;
+  opacity: 0.5;
+}
+
+@keyframes gridDrift {
+  0% { background-position: center center; }
+  50% { background-position: 16px 16px; }
+  100% { background-position: center center; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-section::before {
+    animation: gridDrift 60s ease-in-out infinite;
+  }
+}
+
+.page-section > * {
+  position: relative;
+  z-index: 2;
+}
+
 /* Container */
 .container {
   max-width: var(--container-max-width);

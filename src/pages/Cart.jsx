@@ -10,9 +10,9 @@ export default function Cart() {
 
   if (cart.length === 0) {
     return (
-      <div className="cart-page">
-        <div className="container">
-          <div className="empty-cart">
+      <div className="cart-page page-section">
+        <div className="container page-section">
+          <div className="empty-cart page-section">
             <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
               <circle cx="9" cy="21" r="1"/>
               <circle cx="20" cy="21" r="1"/>
@@ -30,15 +30,15 @@ export default function Cart() {
   }
 
   return (
-    <div className="cart-page">
-      <div className="container">
+    <div className="cart-page page-section">
+      <div className="container page-section">
         <h1>Shopping Cart</h1>
 
-        <div className="cart-layout">
-          <div className="cart-items">
+        <div className="cart-layout page-section">
+          <div className="cart-items page-section">
             {cart.map(item => (
-              <div key={item.cartId} className="cart-item">
-                <div className="cart-item-image">
+              <div key={item.cartId} className="cart-item page-section">
+                <div className="cart-item-image page-section">
                   {item.images && item.images[0] ? (
                     <img src={item.images[0]} alt={item.name} />
                   ) : (
@@ -50,11 +50,11 @@ export default function Cart() {
                   )}
                 </div>
 
-                <div className="cart-item-details">
-                  <Link to={`/product/${item.slug}`} className="cart-item-name">
+                <div className="cart-item-details page-section">
+                  <Link to={`/product/${item.slug}`} className="cart-item-name page-section">
                     {item.name}
                   </Link>
-                  <div className="cart-item-options">
+                  <div className="cart-item-options page-section">
                     {item.selectedOptions?.material && (
                       <span>Material: {item.selectedOptions.material}</span>
                     )}
@@ -62,21 +62,21 @@ export default function Cart() {
                       <span> • Color: {item.selectedOptions.color}</span>
                     )}
                   </div>
-                  <div className="cart-item-price">{formatPrice(item.price)}</div>
+                  <div className="cart-item-price page-section">{formatPrice(item.price)}</div>
 
-                  <div className="cart-item-actions">
-                    <div className="quantity-controls">
+                  <div className="cart-item-actions page-section">
+                    <div className="quantity-controls page-section">
                       <button
-                        className="quantity-btn"
+                        className="quantity-btn page-section"
                         onClick={() => updateQuantity(item.cartId, item.quantity - 1)}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
                       </button>
-                      <span className="quantity-value">{item.quantity}</span>
+                      <span className="quantity-value page-section">{item.quantity}</span>
                       <button
-                        className="quantity-btn"
+                        className="quantity-btn page-section"
                         onClick={() => updateQuantity(item.cartId, item.quantity + 1)}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -88,12 +88,12 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <div className="cart-item-right">
-                  <div className="cart-item-price">
+                <div className="cart-item-right page-section">
+                  <div className="cart-item-price page-section">
                     {formatPrice(item.price * item.quantity)}
                   </div>
                   <button
-                    className="remove-btn"
+                    className="remove-btn page-section"
                     onClick={() => removeFromCart(item.cartId)}
                   >
                     Remove
@@ -103,20 +103,20 @@ export default function Cart() {
             ))}
           </div>
 
-          <div className="cart-summary">
+          <div className="cart-summary page-section">
             <h2>Order Summary</h2>
 
-            <div className="summary-row">
+            <div className="summary-row page-section">
               <span>Subtotal</span>
               <span>{formatPrice(getCartTotal())}</span>
             </div>
 
-            <div className="summary-row">
+            <div className="summary-row page-section">
               <span>Shipping</span>
               <span>Calculated at checkout</span>
             </div>
 
-            <div className="summary-total">
+            <div className="summary-total page-section">
               <span>Total</span>
               <span>{formatPrice(getCartTotal())}</span>
             </div>
@@ -124,7 +124,7 @@ export default function Cart() {
             <Button
               size="large"
               fullWidth
-              className="checkout-btn"
+              className="checkout-btn page-section"
               onClick={() => navigate('/checkout')}
             >
               Proceed to Checkout
