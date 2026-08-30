@@ -86,6 +86,12 @@
   border-right: 1.5px solid var(--color-black);
 }
 
+/* Reusable grid variables — shared with header hover */
+:root {
+  --grid-fine-color: rgba(0, 0, 0, 0.028);
+  --grid-coarse-color: rgba(0, 0, 0, 0.06);
+}
+
 /* Subtle floating layer-line animation (very slow, respects reduced motion) */
 @keyframes gridDrift {
   0% { background-position: center center; }
