@@ -83,6 +83,9 @@ export default function Shop() {
 
       {/* Main shop layout — identical structure to homepage .shop-section */}
       <section className="shop-section">
+        {/* Subtle geometric corner markers — technical workspace detail */}
+        <div className="grid-marker-tl" aria-hidden="true" />
+        <div className="grid-marker-br" aria-hidden="true" />
         <div className="container">
           <div className="shop-layout">
             {/* LEFT SIDEBAR — reuse homepage category navigation exactly */}

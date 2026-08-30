@@ -28,6 +28,84 @@
 .shop-section {
   padding: var(--spacing-12) 0 var(--spacing-20);
   background-color: var(--color-white);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle technical CAD workspace background — fine grid + geometric details */
+.shop-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.028) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center center;
+  opacity: 0.7;
+}
+
+.shop-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+  background-size: 160px 160px;
+  background-position: center center;
+  opacity: 0.5;
+}
+
+/* Very faint geometric outline markers (cube / layer symbols) */
+.shop-section .grid-marker-tl,
+.shop-section .grid-marker-br {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.08;
+}
+.shop-section .grid-marker-tl {
+  top: 60px;
+  left: 60px;
+  width: 24px;
+  height: 24px;
+  border-top: 1.5px solid var(--color-black);
+  border-left: 1.5px solid var(--color-black);
+}
+.shop-section .grid-marker-br {
+  bottom: 60px;
+  right: 60px;
+  width: 24px;
+  height: 24px;
+  border-bottom: 1.5px solid var(--color-black);
+  border-right: 1.5px solid var(--color-black);
+}
+
+/* Subtle floating layer-line animation (very slow, respects reduced motion) */
+@keyframes gridDrift {
+  0% { background-position: center center; }
+  50% { background-position: 16px 16px; }
+  100% { background-position: center center; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .shop-section::before {
+    animation: gridDrift 60s ease-in-out infinite;
+  }
+}
+
+/* Ensure all content stays readable on top of grid */
+.shop-layout,
+.shop-hero,
+.shop-toolbar,
+.shop-content {
+  position: relative;
+  z-index: 2;
 }
 
 /* Two-column layout — left sidebar, right content */
