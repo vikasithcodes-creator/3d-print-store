@@ -102,6 +102,11 @@ export function ProductProvider({ children }) {
       rating: newProductData.rating || 5.0,
       reviews: newProductData.reviews || 0,
       ...newProductData,
+      // Re-apply generated/ensured values after spread to prevent newProductData from overwriting them
+      slug: newProductData.slug || newProductData.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, ''),
       // Re-apply ensured arrays after spread to guarantee they are always arrays
       images: ensureArray(newProductData.images, []).length > 0
         ? ensureArray(newProductData.images, [])
@@ -127,6 +132,7 @@ export function ProductProvider({ children }) {
 
   // Get product by slug
   const getProductBySlug = (slug) => {
+    if (!slug || typeof slug !== 'string') return undefined;
     return products.find(p => p.slug === slug);
   };
 

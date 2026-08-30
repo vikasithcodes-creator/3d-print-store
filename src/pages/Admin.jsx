@@ -122,9 +122,22 @@ export default function Admin() {
       return;
     }
 
+    // Generate slug from name if empty/invalid
+    let finalSlug = editingProduct.slug;
+    if (!finalSlug || !finalSlug.trim()) {
+      finalSlug = editingProduct.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+    }
+    if (!finalSlug) {
+      finalSlug = 'product-' + Date.now();
+    }
+
     // Clean up all arrays to ensure they are never undefined/null
     const cleanedProduct = {
       ...editingProduct,
+      slug: finalSlug,
       images: Array.isArray(editingProduct.images)
         ? editingProduct.images.filter(img => img && img.trim())
         : [],

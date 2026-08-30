@@ -34,6 +34,18 @@ export default function ProductDetail() {
     }
   }, [product]);
 
+  if (!slug) {
+    return (
+      <div className="container" style={{ padding: '60px 0', textAlign: 'center' }}>
+        <h1>Product Not Found</h1>
+        <p style={{ color: 'var(--color-gray-600)', marginBottom: 'var(--spacing-6)' }}>
+          No product identifier was provided.
+        </p>
+        <Link to="/shop"><Button>Back to Shop</Button></Link>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
       <div className="container" style={{ padding: '60px 0', textAlign: 'center' }}>
