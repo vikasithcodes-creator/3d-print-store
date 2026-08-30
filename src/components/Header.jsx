@@ -9,8 +9,24 @@ export default function Header() {
 
   const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
+  // Cursor-following grid effect — update CSS vars directly on header element
+  const handleMouseMove = (e) => {
+    const header = e.currentTarget;
+    const rect = header.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    header.style.setProperty('--mouse-x', `${x}px`);
+    header.style.setProperty('--mouse-y', `${y}px`);
+    header.style.setProperty('--mouse-inside', '1');
+  };
+
+  const handleMouseLeave = (e) => {
+    const header = e.currentTarget;
+    header.style.setProperty('--mouse-inside', '0');
+  };
+
   return (
-    <header className="header">
+    <header className="header" onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
       <div className="container">
         <div className="header-content">
           <Link to="/" className="logo">
