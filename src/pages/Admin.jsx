@@ -33,6 +33,8 @@ export default function Admin() {
   const [filterStock, setFilterStock] = useState('all');
   const [filterFeatured, setFilterFeatured] = useState('all');
   const [tab, setTab] = useState('products');
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
 
   // Track form changes
   useEffect(() => {
@@ -96,6 +98,29 @@ export default function Admin() {
     }
   };
 
+  const [newColorName, setNewColorName] = useState('');
+  const [newColorHex, setNewColorHex] = useState('#000000');
+  const [showColorPicker, setShowColorPicker] = useState(false);
+
+  // Add color
+  const addColor = () => {
+    if (!newColorName.trim()) return;
+    const currentColors = [...(editingProduct.colors || [])];
+    if (!currentColors.includes(newColorName.trim())) {
+      currentColors.push(newColorName.trim());
+      updateField('colors', currentColors);
+    }
+    setNewColorName('');
+    setShowColorPicker(false);
+  };
+
+  // Remove color
+  const removeColor = (colorToRemove) => {
+    const currentColors = [...(editingProduct.colors || [])];
+    const updatedColors = currentColors.filter(c => c !== colorToRemove);
+    updateField('colors', updatedColors);
+  };
+
   // Update field
   const updateField = (field, value) => {
     setEditingProduct({ ...editingProduct, [field]: value });
@@ -118,6 +143,74 @@ export default function Admin() {
   const removeImage = (index) => {
     const newImages = [...(editingProduct.images || [])];
     newImages.splice(index, 1);
+    updateField('images', newImages);
+  };
+
+  // Handle file selection for upload
+  const handleImageUpload = async (files) => {
+    if (!files || files.length === 0) return;
+
+    setUploadingImages(true);
+    const currentImages = [...(editingProduct.images || [])];
+
+    try {
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
+
+        // Create local preview URL
+        const previewUrl = URL.createObjectURL(file);
+
+        // Add to images array immediately with preview
+        currentImages.push(previewUrl);
+        updateField('images', currentImages);
+
+        // Try to upload to Cloudinary
+        try {
+          const cloudinaryUrl = await uploadToCloudinary(file);
+          // Replace preview URL with Cloudinary URL
+          const idx = currentImages.indexOf(previewUrl);
+          if (idx !== -1) {
+            currentImages[idx] = cloudinaryUrl;
+            updateField('images', [...currentImages]);
+          }
+          URL.revokeObjectURL(previewUrl);
+        } catch (uploadError) {
+          console.warn('Cloudinary upload failed, keeping local preview:', uploadError);
+          // Keep the blob URL as fallback
+        }
+      }
+    } catch (error) {
+      alert('Error processing images: ' + error.message);
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+    handleImageUpload(e.dataTransfer.files);
+  };
+
+  // Reorder images
+  const moveImage = (fromIndex, toIndex) => {
+    const newImages = [...(editingProduct.images || [])];
+    const [movedItem] = newImages.splice(fromIndex, 1);
+    newImages.splice(toIndex, 0, movedItem);
     updateField('images', newImages);
   };
 
@@ -590,20 +683,53 @@ export default function Admin() {
               <div className="form-section">
                 <h3 className="form-section-title">Product Images</h3>
                 <p className="form-section-description">
-                  Add images to <code>public/products/</code> folder, then enter their paths below.
+                  Upload product images or paste image URLs. Drag and drop multiple images at once.
                 </p>
-                <div className="image-manager">
+
+                {/* Upload drop zone */}
+                <div
+                  className={`image-upload-zone ${dragOver ? 'image-upload-zone--active' : ''}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById('imageFileInput').click()}
+                >
+                  <input
+                    id="imageFileInput"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleImageUpload(e.target.files)}
+                  />
+                  <div className="image-upload-zone-content">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <p className="image-upload-zone-title">
+                      {uploadingImages ? 'Uploading...' : 'Drop images here or click to browse'}
+                    </p>
+                    <p className="image-upload-zone-hint">
+                      Supports JPG, PNG, WebP · Multiple images allowed
+                    </p>
+                  </div>
+                </div>
+
+                {/* Image gallery */}
+                <div className="image-gallery">
                   {editingProduct.images && editingProduct.images.length > 0 ? (
                     editingProduct.images.map((image, index) => (
-                      <div key={index} className="image-item">
-                        <div className="image-item-preview">
+                      <div key={index} className="image-gallery-item">
+                        <div className="image-gallery-item-preview">
                           {image ? (
                             <img src={image} alt={`Product ${index + 1}`} onError={(e) => {
                               e.target.style.display = 'none';
                               e.target.nextSibling.style.display = 'flex';
                             }} />
                           ) : null}
-                          <div className="image-item-placeholder" style={{ display: image ? 'none' : 'flex' }}>
+                          <div className="image-gallery-placeholder" style={{ display: image ? 'none' : 'flex' }}>
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                               <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -611,37 +737,58 @@ export default function Admin() {
                             </svg>
                           </div>
                         </div>
-                        <div className="image-item-content">
-                          <input
-                            type="text"
-                            className="form-input form-input--small"
-                            value={image}
-                            onChange={(e) => updateImage(index, e.target.value)}
-                            placeholder="/products/my-image.jpg"
-                          />
+                        <div className="image-gallery-item-actions">
+                          <div className="image-gallery-item-controls">
+                            <button
+                              type="button"
+                              className="btn-icon"
+                              onClick={() => index > 0 && moveImage(index, index - 1)}
+                              disabled={index === 0}
+                              title="Move left"
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="15 18 9 12 15 6"/>
+                              </svg>
+                            </button>
+                            <span className="image-gallery-item-index">{index + 1}</span>
+                            <button
+                              type="button"
+                              className="btn-icon"
+                              onClick={() => index < editingProduct.images.length - 1 && moveImage(index, index + 1)}
+                              disabled={index === editingProduct.images.length - 1}
+                              title="Move right"
+                            >
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <polyline points="9 18 15 12 9 6"/>
+                              </svg>
+                            </button>
+                          </div>
                           <button
                             type="button"
-                            className="btn-action btn-action--delete btn-action--small"
+                            className="btn-icon btn-icon--danger"
                             onClick={() => removeImage(index)}
                             title="Remove image"
                           >
-                            Remove
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <polyline points="3 6 5 6 21 6"/>
+                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
                           </button>
                         </div>
+                        <input
+                          type="text"
+                          className="form-input form-input--small"
+                          value={image}
+                          onChange={(e) => updateImage(index, e.target.value)}
+                          placeholder="/products/image.jpg or paste URL"
+                        />
                       </div>
                     ))
                   ) : (
-                    <div className="image-empty-state">
-                      <p>No images added yet</p>
+                    <div className="image-gallery-empty">
+                      <p>No images added yet. Upload or paste image URLs above.</p>
                     </div>
                   )}
-                  <button
-                    type="button"
-                    className="btn btn--secondary btn--small"
-                    onClick={addImage}
-                  >
-                    + Add Image
-                  </button>
                 </div>
               </div>
 
@@ -668,6 +815,92 @@ export default function Admin() {
                       onChange={(e) => updateField('printTime', e.target.value)}
                       placeholder="6-8 hours"
                     />
+                  </div>
+                </div>
+
+                {/* Colours */}
+                <div className="form-field" style={{ marginTop: 'var(--spacing-4)' }}>
+                  <label className="form-label">Colours</label>
+                  <p className="form-help" style={{ marginBottom: 'var(--spacing-3)' }}>
+                    Add colour options for this product
+                  </p>
+
+                  {/* Existing colours */}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--spacing-2)', marginBottom: 'var(--spacing-3)' }}>
+                    {editingProduct.colors && editingProduct.colors.length > 0 ? (
+                      editingProduct.colors.map((color, index) => (
+                        <div
+                          key={index}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 'var(--spacing-2)',
+                            padding: 'var(--spacing-2) var(--spacing-3)',
+                            background: 'var(--admin-hover-bg)',
+                            border: '1px solid var(--admin-border)',
+                            borderRadius: '6px'
+                          }}
+                        >
+                          <span style={{ fontSize: '14px' }}>{color}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeColor(color)}
+                            className="btn-icon"
+                            style={{ padding: '2px 6px', fontSize: '12px' }}
+                            title="Remove colour"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))
+                    ) : (
+                      <p style={{ color: 'var(--admin-text-secondary)', fontSize: '14px' }}>
+                        No colours added yet
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Add new colour */}
+                  <div style={{ display: 'flex', gap: 'var(--spacing-2)', alignItems: 'flex-end' }}>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        type="text"
+                        className="form-input form-input--small"
+                        value={newColorName}
+                        onChange={(e) => setNewColorName(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            addColor();
+                          }
+                        }}
+                        placeholder="Enter colour name (e.g., Black, Navy Blue)"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="color"
+                        value={newColorHex}
+                        onChange={(e) => setNewColorHex(e.target.value)}
+                        style={{
+                          width: '60px',
+                          height: '38px',
+                          border: '1px solid var(--admin-border)',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          padding: '4px'
+                        }}
+                        title="Pick colour (for reference)"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addColor}
+                      className="btn btn--secondary"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      + Add Colour
+                    </button>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,1608 @@
+<title>Studio Whitebox — 3D Print Staging</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg-main: #0c0d10;
+    --bg-surface: #14151b;
+    --bg-card: #1c1d25;
+    --bg-hover: #262732;
+    --border-subtle: #2b2d3a;
+    --border-strong: #3e4254;
+
+    --accent-blue: #3b82f6;
+    --accent-blue-hover: #2563eb;
+    --accent-green: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-purple: #8b5cf6;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-tertiary: #64748b;
+    --text-inverse: #0f172a;
+
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-full: 9999px;
+
+    --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    --shadow-pop: 0 12px 32px -4px rgba(0, 0, 0, 0.7);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* Header */
+  .top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-badge {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    color: white;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    letter-spacing: -0.02em;
+  }
+
+  .brand-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-subtitle {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-sans);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: var(--accent-blue);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--accent-blue-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-secondary {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-subtle);
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--border-strong);
+  }
+
+  .btn-success {
+    background-color: var(--accent-green);
+    color: white;
+  }
+
+  .btn-success:hover {
+    background-color: #059669;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+
+  .btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Main Workspace Layout */
+  .app-container {
+    display: grid;
+    grid-template-columns: 340px 1fr 420px;
+    flex: 1;
+    min-height: calc(100vh - 65px);
+  }
+
+  @media (max-width: 1200px) {
+    .app-container {
+      grid-template-columns: 300px 1fr;
+    }
+    .amazon-preview-col {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 800px) {
+    .app-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Left Panel: Uploads & Angles */
+  .left-sidebar {
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-subtle);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .upload-box {
+    border: 2px dashed var(--border-strong);
+    background-color: rgba(28, 29, 37, 0.6);
+    border-radius: var(--radius-lg);
+    padding: 24px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .upload-box:hover, .upload-box.dragover {
+    border-color: var(--accent-blue);
+    background-color: rgba(59, 130, 246, 0.08);
+  }
+
+  .upload-icon {
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 12px;
+    background-color: var(--bg-hover);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-blue);
+  }
+
+  .upload-hint {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .upload-subhint {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  /* Angles Slot List */
+  .angles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .angle-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
+  .angle-card:hover {
+    border-color: var(--border-strong);
+    background-color: var(--bg-hover);
+  }
+
+  .angle-card.active {
+    border-color: var(--accent-blue);
+    background-color: rgba(59, 130, 246, 0.12);
+  }
+
+  .angle-thumb-wrap {
+    width: 48px;
+    height: 48px;
+    background-color: #ffffff;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid var(--border-subtle);
+    position: relative;
+  }
+
+  .angle-thumb {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .angle-thumb-placeholder {
+    color: #a1a1aa;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+  }
+
+  .angle-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .angle-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+
+  .angle-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .angle-status {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .angle-status.ready {
+    color: var(--accent-green);
+  }
+
+  .remove-angle-btn {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: var(--radius-sm);
+  }
+  .remove-angle-btn:hover {
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+
+  /* Center: Workbench Canvas */
+  .center-workbench {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-main);
+    padding: 24px;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    padding: 10px 16px;
+    border-radius: var(--radius-lg);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .tool-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tool-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .bg-picker-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    background: var(--bg-card);
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .bg-opt {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: transform 0.1s;
+  }
+
+  .bg-opt:hover {
+    transform: scale(1.1);
+  }
+
+  .bg-opt.active {
+    border-color: var(--accent-blue);
+  }
+
+  .bg-white { background: #ffffff; }
+  .bg-gray { background: #f3f4f6; }
+  .bg-dark { background: #18181b; }
+  .bg-trans {
+    background: repeating-conic-gradient(#cbd5e1 0% 25%, #ffffff 0% 50%) 50% / 12px 12px;
+  }
+
+  /* Canvas Stage */
+  .canvas-stage-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #050608;
+    background-image:
+      radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+    padding: 30px;
+    position: relative;
+    min-height: 480px;
+  }
+
+  .canvas-container {
+    position: relative;
+    box-shadow: var(--shadow-pop);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  #mainCanvas {
+    display: block;
+    max-width: 100%;
+    max-height: 520px;
+    object-fit: contain;
+    background: #ffffff;
+  }
+
+  /* Crosshair & CAD ruler overlays */
+  .cad-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border: 1px dashed rgba(59, 130, 246, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .cad-crosshair {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .cad-crosshair::before, .cad-crosshair::after {
+    content: '';
+    position: absolute;
+    background-color: rgba(59, 130, 246, 0.25);
+  }
+
+  .cad-crosshair::before {
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+  }
+
+  .cad-crosshair::after {
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  .cad-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.75);
+    color: #38bdf8;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+
+  /* Bottom Controls Box */
+  .controls-panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .control-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .control-value {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--accent-blue);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--bg-hover);
+    border-radius: var(--radius-full);
+    outline: none;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+  }
+
+  /* Right Panel: Amazon Live Product Showcase */
+  .amazon-preview-col {
+    background-color: #ffffff;
+    color: #0f1111;
+    border-left: 1px solid var(--border-subtle);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+  }
+
+  .amz-badge-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .amz-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #565959;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .amz-live-pill {
+    background: #e6f4ea;
+    color: #137333;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .amz-live-pill::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: #137333;
+    border-radius: 50%;
+  }
+
+  /* Amazon Product Showcase Component */
+  .amz-gallery-wrapper {
+    display: flex;
+    gap: 14px;
+  }
+
+  .amz-thumbnails {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 50px;
+  }
+
+  .amz-thumb-item {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #d5d9d9;
+    border-radius: 4px;
+    padding: 2px;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .amz-thumb-item:hover {
+    border-color: #e77600;
+    box-shadow: 0 0 3px 2px rgba(228, 121, 17, 0.5);
+  }
+
+  .amz-thumb-item.active {
+    border-color: #e77600;
+    box-shadow: 0 0 3px 2px rgba(228, 121, 17, 0.7);
+  }
+
+  .amz-thumb-item img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .amz-main-stage {
+    flex: 1;
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #ffffff;
+    border: 1px solid #e7e7e7;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  .amz-hero-img {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    transition: transform 0.2s ease-out;
+  }
+
+  .amz-zoom-hint {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    font-size: 11px;
+    color: #565959;
+    background: rgba(255,255,255,0.9);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #d5d9d9;
+  }
+
+  /* Amazon Product Info Box */
+  .amz-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #0f1111;
+    line-height: 1.35;
+  }
+
+  .amz-brand-link {
+    font-size: 13px;
+    color: #007185;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .amz-brand-link:hover {
+    color: #c7511f;
+    text-decoration: underline;
+  }
+
+  .amz-ratings-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .amz-stars {
+    color: #de7921;
+    letter-spacing: -1px;
+  }
+
+  .amz-price-box {
+    padding: 8px 0;
+    border-top: 1px solid #e7e7e7;
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .amz-price {
+    font-size: 24px;
+    font-weight: 500;
+    color: #0f1111;
+  }
+
+  .amz-symbol {
+    font-size: 14px;
+    vertical-align: super;
+  }
+
+  .amz-prime-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #565959;
+    margin-top: 4px;
+  }
+
+  .amz-prime-logo {
+    color: #00a8e1;
+    font-weight: 800;
+    font-style: italic;
+  }
+
+  .amz-specs-table {
+    width: 100%;
+    font-size: 12px;
+    border-collapse: collapse;
+  }
+
+  .amz-specs-table td {
+    padding: 4px 0;
+  }
+
+  .amz-specs-table td:first-child {
+    font-weight: 600;
+    color: #0f1111;
+    width: 40%;
+  }
+
+  .amz-specs-table td:last-child {
+    color: #565959;
+  }
+
+  .export-action-card {
+    background: #f7fafa;
+    border: 1px solid #d5d9d9;
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-top: auto;
+  }
+
+  .export-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f1111;
+    margin-bottom: 8px;
+  }
+
+  .export-buttons-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  /* Notification Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--accent-green);
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-pop);
+    z-index: 999;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+
+<div class="top-nav">
+  <div class="nav-brand">
+    <div class="brand-badge">SM 3D</div>
+    <div>
+      <div class="brand-title">
+        Studio Whitebox
+        <span style="font-size:10px; background:rgba(59,130,246,0.15); color:#60a5fa; padding:2px 6px; border-radius:4px; font-weight:600;">AMAZON READY</span>
+      </div>
+      <div class="brand-subtitle">AI Multi-Angle Background Remover & Stager</div>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <button class="btn btn-secondary btn-sm" id="loadSampleBtn" onclick="loadSample3DModel()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+      Load Sample 3D Set
+    </button>
+    <button class="btn btn-primary btn-sm" onclick="exportCurrentAngle('desk-organizer.jpg')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Save to public/products/
+    </button>
+  </div>
+</div>
+
+<div class="app-container">
+  <!-- LEFT PANEL: Image Uploads & Multi-Angle Slots -->
+  <div class="left-sidebar">
+    <div>
+      <div class="section-title">
+        <span>1. Upload Product Shots</span>
+        <span style="font-size: 11px; color: var(--accent-blue);">4-5 Angles</span>
+      </div>
+
+      <div class="upload-box" id="dropZone" onclick="document.getElementById('fileInput').click()">
+        <input type="file" id="fileInput" multiple accept="image/*" style="display:none" onchange="handleFileUpload(event)">
+        <div class="upload-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <div class="upload-hint">Click or Drop Photos Here</div>
+        <div class="upload-subhint">JPG, PNG, WEBP (Raw smartphone photos supported)</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-title">
+        <span>2. Multi-Angle Catalog</span>
+        <span id="angleCount" style="font-family: var(--font-mono); font-size:11px;">0/5</span>
+      </div>
+
+      <div class="angles-list" id="anglesList">
+        <!-- Angle slots generated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- CENTER: Workbench Canvas & Image Processor -->
+  <div class="center-workbench">
+    <div class="toolbar">
+      <div class="tool-group">
+        <span class="tool-label">View Canvas:</span>
+        <div class="bg-picker-group">
+          <div class="bg-opt bg-white active" title="Amazon Pure White (Recommended)" onclick="setCanvasBg('white')"></div>
+          <div class="bg-opt bg-gray" title="Studio Light Gray" onclick="setCanvasBg('gray')"></div>
+          <div class="bg-opt bg-trans" title="Transparent PNG" onclick="setCanvasBg('trans')"></div>
+          <div class="bg-opt bg-dark" title="Dark Inspection Mode" onclick="setCanvasBg('dark')"></div>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <button class="btn btn-secondary btn-sm" id="magicWandBtn" onclick="toggleMagicWand()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m19 11-8-8-8.5 8.5a2.12 2.12 0 0 0 0 3l5 5c.8.8 2.2.8 3 0L19 11Z"/><path d="m5 2 5 5"/></svg>
+          <span id="wandStatusText">Sample BG Color (Click Image)</span>
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="toggleCadGrid()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+          Grid
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="autoSquareAndCenter()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+          Amazon 1:1 Fit
+        </button>
+      </div>
+    </div>
+
+    <div class="canvas-stage-wrapper">
+      <div class="canvas-container">
+        <canvas id="mainCanvas" width="1000" height="1000"></canvas>
+        <div class="cad-overlay" id="cadOverlay" style="display:none;">
+          <div class="cad-crosshair"></div>
+          <div class="cad-badge">1000 × 1000px | 85% PRODUCT RATIO</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processing Sliders -->
+    <div class="controls-panel">
+      <div class="control-item">
+        <div class="control-header">
+          <span class="control-title">Background Removal Threshold</span>
+          <span class="control-value" id="threshVal">35</span>
+        </div>
+        <input type="range" id="threshSlider" min="0" max="150" value="35" oninput="updateProcess()">
+      </div>
+
+      <div class="control-item">
+        <div class="control-header">
+          <span class="control-title">Edge Feather & Smoothness</span>
+          <span class="control-value" id="smoothVal">2px</span>
+        </div>
+        <input type="range" id="smoothSlider" min="0" max="10" value="2" oninput="updateProcess()">
+      </div>
+
+      <div class="control-item">
+        <div class="control-header">
+          <span class="control-title">Contact Ground Shadow</span>
+          <span class="control-value" id="shadowVal">40%</span>
+        </div>
+        <input type="range" id="shadowSlider" min="0" max="100" value="40" oninput="updateProcess()">
+      </div>
+
+      <div class="control-item">
+        <div class="control-header">
+          <span class="control-title">3D Print Texture Clarity</span>
+          <span class="control-value" id="clarityVal">1.1x</span>
+        </div>
+        <input type="range" id="claritySlider" min="80" max="160" value="110" oninput="updateProcess()">
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Live Amazon Product Listing Mockup -->
+  <div class="amazon-preview-col">
+    <div class="amz-badge-header">
+      <span class="amz-tag">Amazon Product View</span>
+      <span class="amz-live-pill">Live Preview</span>
+    </div>
+
+    <div class="amz-gallery-wrapper">
+      <div class="amz-thumbnails" id="amzThumbs">
+        <!-- Live Thumbnails -->
+      </div>
+
+      <div class="amz-main-stage" id="amzStage" onmousemove="handleAmzZoom(event)" onmouseleave="resetAmzZoom()">
+        <img id="amzHero" class="amz-hero-img" src="" alt="Main View">
+        <div class="amz-zoom-hint">🔍 Hover to zoom</div>
+      </div>
+    </div>
+
+    <div>
+      <a href="#" class="amz-brand-link">Visit the SM Studio 3D Store</a>
+      <h1 class="amz-title">Geometric Desk Organizer & Tech Dock — Multi-Compartment 3D Printed Matte Finish</h1>
+    </div>
+
+    <div class="amz-ratings-row">
+      <span class="amz-stars">★★★★★</span>
+      <span style="color:#007185; font-weight:600;">4.8</span>
+      <span style="color:#565959;">(124 ratings)</span>
+    </div>
+
+    <div class="amz-price-box">
+      <div class="amz-price">
+        <span class="amz-symbol">₹</span>1,999<span style="font-size:14px; font-weight:400;">.00</span>
+      </div>
+      <div class="amz-prime-row">
+        <span class="amz-prime-logo">prime</span>
+        <span>FREE One-Day Delivery & Free Returns</span>
+      </div>
+    </div>
+
+    <table class="amz-specs-table">
+      <tr>
+        <td>Material</td>
+        <td>High-Grade PLA / PETG</td>
+      </tr>
+      <tr>
+        <td>Dimensions</td>
+        <td>15cm × 10cm × 8cm</td>
+      </tr>
+      <tr>
+        <td>Layer Precision</td>
+        <td>0.16mm High-Detail</td>
+      </tr>
+      <tr>
+        <td>Manufactured</td>
+        <td>SM Studio Digital Fab</td>
+      </tr>
+    </table>
+
+    <div class="export-action-card">
+      <div class="export-title">Export Clean Product Images</div>
+      <p style="font-size:11px; color:#565959; margin-bottom:10px;">
+        Formatted in Amazon standard square ratio (1000×1000) on pure white `#FFFFFF` ground.
+      </p>
+      <div class="export-buttons-grid">
+        <button class="btn btn-primary btn-sm" onclick="downloadImage('jpg')">
+          Download JPG (#FFF)
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="downloadImage('png')">
+          Download PNG (Alpha)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Image processed successfully!</span>
+</div>
+
+<script>
+  // State management
+  let angles = [
+    { id: 1, label: 'Hero View', tag: 'Primary / 45°', img: null, processedUrl: null, ready: false },
+    { id: 2, label: 'Side Angle', tag: 'Profile / Depth', img: null, processedUrl: null, ready: false },
+    { id: 3, label: 'Top-Down', tag: 'Compartments', img: null, processedUrl: null, ready: false },
+    { id: 4, label: 'Layer Detail', tag: 'Close-Up Texture', img: null, processedUrl: null, ready: false },
+    { id: 5, label: 'In-Hand Scale', tag: 'Size Reference', img: null, processedUrl: null, ready: false }
+  ];
+
+  let currentAngleIndex = 0;
+  let canvasBgMode = 'white';
+  let sampledBgColor = { r: 240, g: 240, b: 240 };
+  let isPickingColor = false;
+  let showCad = false;
+
+  const canvas = document.getElementById('mainCanvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+  // Initialize
+  window.addEventListener('DOMContentLoaded', () => {
+    renderAnglesList();
+    renderAmzThumbnails();
+    loadSample3DModel(); // Load initial realistic sample so UI looks vibrant immediately!
+  });
+
+  function renderAnglesList() {
+    const list = document.getElementById('anglesList');
+    list.innerHTML = '';
+    let readyCount = 0;
+
+    angles.forEach((angle, index) => {
+      if (angle.ready) readyCount++;
+      const card = document.createElement('div');
+      card.className = `angle-card ${index === currentAngleIndex ? 'active' : ''}`;
+      card.onclick = () => selectAngle(index);
+
+      card.innerHTML = `
+        <div class="angle-thumb-wrap">
+          ${angle.processedUrl
+            ? `<img class="angle-thumb" src="${angle.processedUrl}" alt="${angle.label}">`
+            : `<span class="angle-thumb-placeholder">ANG ${index+1}</span>`
+          }
+        </div>
+        <div class="angle-info">
+          <div class="angle-badge">${angle.tag}</div>
+          <div class="angle-name">${angle.label}</div>
+          <div class="angle-status ${angle.ready ? 'ready' : ''}">
+            ${angle.ready ? '✓ Background Removed' : 'Empty slot (Upload photo)'}
+          </div>
+        </div>
+        ${angle.ready ? `
+          <button class="remove-angle-btn" onclick="event.stopPropagation(); clearAngle(${index})" title="Reset slot">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        ` : ''}
+      `;
+      list.appendChild(card);
+    });
+
+    document.getElementById('angleCount').textContent = `${readyCount}/5 Ready`;
+  }
+
+  function renderAmzThumbnails() {
+    const thumbsContainer = document.getElementById('amzThumbs');
+    thumbsContainer.innerHTML = '';
+
+    angles.forEach((angle, idx) => {
+      const thumb = document.createElement('div');
+      thumb.className = `amz-thumb-item ${idx === currentAngleIndex ? 'active' : ''}`;
+      thumb.onclick = () => selectAngle(idx);
+
+      if (angle.processedUrl) {
+        thumb.innerHTML = `<img src="${angle.processedUrl}" alt="${angle.label}">`;
+      } else {
+        thumb.innerHTML = `<span style="font-size:9px; font-weight:700; color:#888;">#${idx+1}</span>`;
+      }
+      thumbsContainer.appendChild(thumb);
+    });
+
+    // Update Amazon main hero
+    const heroImg = document.getElementById('amzHero');
+    if (angles[currentAngleIndex]?.processedUrl) {
+      heroImg.src = angles[currentAngleIndex].processedUrl;
+      heroImg.style.display = 'block';
+    } else {
+      heroImg.style.display = 'none';
+    }
+  }
+
+  function selectAngle(index) {
+    currentAngleIndex = index;
+    renderAnglesList();
+    renderAmzThumbnails();
+    if (angles[index].img) {
+      processImage();
+    }
+  }
+
+  function clearAngle(index) {
+    angles[index].img = null;
+    angles[index].processedUrl = null;
+    angles[index].ready = false;
+    renderAnglesList();
+    renderAmzThumbnails();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  // File Upload Handler (Single or Multiple)
+  function handleFileUpload(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    let targetIdx = currentAngleIndex;
+
+    files.forEach((file, i) => {
+      const slotIdx = (targetIdx + i) % angles.length;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          angles[slotIdx].img = img;
+          angles[slotIdx].ready = true;
+          if (slotIdx === currentAngleIndex) {
+            processImage();
+          } else {
+            // Background process offscreen
+            processOffscreen(slotIdx);
+          }
+          showToast(`Uploaded & processed Angle #${slotIdx+1}`);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Drag and drop handling
+  const dropZone = document.getElementById('dropZone');
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) {
+      handleFileUpload({ target: { files: e.dataTransfer.files } });
+    }
+  });
+
+  // Canvas Processing Engine
+  function processImage() {
+    const angle = angles[currentAngleIndex];
+    if (!angle || !angle.img) return;
+
+    const img = angle.img;
+    const threshold = parseInt(document.getElementById('threshSlider').value);
+    const shadowAmount = parseInt(document.getElementById('shadowSlider').value) / 100;
+    const clarity = parseInt(document.getElementById('claritySlider').value) / 100;
+
+    // Temporary working canvas for source image
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = img.width;
+    tempCanvas.height = img.height;
+    const tCtx = tempCanvas.getContext('2d');
+    tCtx.drawImage(img, 0, 0);
+
+    const imgData = tCtx.getImageData(0, 0, img.width, img.height);
+    const data = imgData.data;
+
+    // Background color detection (use sampledBgColor or sample the 4 corners automatically)
+    const targetR = sampledBgColor.r;
+    const targetG = sampledBgColor.g;
+    const targetB = sampledBgColor.b;
+
+    // Euclidean color distance mask
+    let minX = img.width, minY = img.height, maxX = 0, maxY = 0;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i];
+      const g = data[i+1];
+      const b = data[i+2];
+
+      const dist = Math.sqrt(
+        Math.pow(r - targetR, 2) +
+        Math.pow(g - targetG, 2) +
+        Math.pow(b - targetB, 2)
+      );
+
+      if (dist < threshold) {
+        // Transparent background
+        data[i+3] = 0;
+      } else if (dist < threshold + 20) {
+        // Soft anti-aliased edge feather
+        const alpha = (dist - threshold) / 20;
+        data[i+3] = Math.round(data[i+3] * alpha);
+      } else {
+        // Contrast & Clarity boost on the 3D model itself
+        if (clarity !== 1) {
+          data[i] = Math.min(255, Math.max(0, (r - 128) * clarity + 128));
+          data[i+1] = Math.min(255, Math.max(0, (g - 128) * clarity + 128));
+          data[i+2] = Math.min(255, Math.max(0, (b - 128) * clarity + 128));
+        }
+
+        // Track bounding box of extracted object for Amazon 1:1 auto-centering
+        const pixelIdx = i / 4;
+        const x = pixelIdx % img.width;
+        const y = Math.floor(pixelIdx / img.width);
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+
+    tCtx.putImageData(imgData, 0, 0);
+
+    // Now render onto 1000x1000 Master Output Canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Paint Background
+    if (canvasBgMode === 'white') {
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else if (canvasBgMode === 'gray') {
+      ctx.fillStyle = '#f3f4f6';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } else if (canvasBgMode === 'dark') {
+      ctx.fillStyle = '#18181b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    } // else transparent
+
+    // Calculate centered 85% Amazon scale fit
+    const objWidth = Math.max(10, maxX - minX);
+    const objHeight = Math.max(10, maxY - minY);
+    const targetSize = canvas.width * 0.82; // 82% Amazon filling ratio
+
+    const scale = Math.min(targetSize / objWidth, targetSize / objHeight);
+    const drawW = objWidth * scale;
+    const drawH = objHeight * scale;
+    const drawX = (canvas.width - drawW) / 2;
+    const drawY = (canvas.height - drawH) / 2 - 10; // slightly higher to leave room for drop shadow
+
+    // 1. Render Realistic Contact Studio Drop Shadow
+    if (shadowAmount > 0 && canvasBgMode !== 'trans') {
+      ctx.save();
+      ctx.fillStyle = `rgba(0, 0, 0, ${0.35 * shadowAmount})`;
+      ctx.filter = 'blur(16px)';
+      ctx.beginPath();
+      ctx.ellipse(
+        canvas.width / 2,
+        drawY + drawH + 12,
+        drawW * 0.42,
+        drawH * 0.08,
+        0, 0, Math.PI * 2
+      );
+      ctx.fill();
+
+      // Sharp contact line underneath
+      ctx.fillStyle = `rgba(0, 0, 0, ${0.5 * shadowAmount})`;
+      ctx.filter = 'blur(6px)';
+      ctx.beginPath();
+      ctx.ellipse(
+        canvas.width / 2,
+        drawY + drawH + 4,
+        drawW * 0.35,
+        drawH * 0.03,
+        0, 0, Math.PI * 2
+      );
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 2. Draw Clean Product Subject
+    ctx.drawImage(
+      tempCanvas,
+      minX, minY, objWidth, objHeight,
+      drawX, drawY, drawW, drawH
+    );
+
+    // Save processed data URL
+    const url = canvas.toDataURL('image/png');
+    angle.processedUrl = url;
+    renderAnglesList();
+    renderAmzThumbnails();
+  }
+
+  function processOffscreen(index) {
+    const angle = angles[index];
+    if (!angle || !angle.img) return;
+
+    const offCanvas = document.createElement('canvas');
+    offCanvas.width = 1000;
+    offCanvas.height = 1000;
+    const oCtx = offCanvas.getContext('2d');
+
+    oCtx.fillStyle = '#ffffff';
+    oCtx.fillRect(0, 0, 1000, 1000);
+
+    // Draw centered sample
+    const scale = 0.8;
+    const w = offCanvas.width * scale;
+    const h = (angle.img.height / angle.img.width) * w;
+    const x = (offCanvas.width - w) / 2;
+    const y = (offCanvas.height - h) / 2;
+
+    oCtx.drawImage(angle.img, x, y, w, h);
+    angle.processedUrl = offCanvas.toDataURL('image/png');
+    angle.ready = true;
+    renderAnglesList();
+    renderAmzThumbnails();
+  }
+
+  function updateProcess() {
+    document.getElementById('threshVal').textContent = document.getElementById('threshSlider').value;
+    document.getElementById('smoothVal').textContent = document.getElementById('smoothSlider').value + 'px';
+    document.getElementById('shadowVal').textContent = document.getElementById('shadowSlider').value + '%';
+    document.getElementById('clarityVal').textContent = (document.getElementById('claritySlider').value / 100).toFixed(1) + 'x';
+    processImage();
+  }
+
+  function setCanvasBg(mode) {
+    canvasBgMode = mode;
+    document.querySelectorAll('.bg-opt').forEach(el => el.classList.remove('active'));
+    document.querySelector(`.bg-${mode}`).classList.add('active');
+    processImage();
+  }
+
+  function toggleCadGrid() {
+    showCad = !showCad;
+    document.getElementById('cadOverlay').style.display = showCad ? 'flex' : 'none';
+  }
+
+  function autoSquareAndCenter() {
+    processImage();
+    showToast('Auto-scaled to Amazon 1:1 Square (85% safe area)');
+  }
+
+  // Magic Wand Color Picker
+  function toggleMagicWand() {
+    isPickingColor = !isPickingColor;
+    const btn = document.getElementById('magicWandBtn');
+    const txt = document.getElementById('wandStatusText');
+    if (isPickingColor) {
+      btn.classList.remove('btn-secondary');
+      btn.classList.add('btn-primary');
+      txt.textContent = 'Click on Background Area in Canvas';
+      canvas.style.cursor = 'crosshair';
+    } else {
+      btn.classList.remove('btn-primary');
+      btn.classList.add('btn-secondary');
+      txt.textContent = 'Sample BG Color (Click Image)';
+      canvas.style.cursor = 'default';
+    }
+  }
+
+  canvas.addEventListener('click', (e) => {
+    if (!isPickingColor) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) * (canvas.width / rect.width));
+    const y = Math.floor((e.clientY - rect.top) * (canvas.height / rect.height));
+
+    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    sampledBgColor = { r: pixel[0], g: pixel[1], b: pixel[2] };
+
+    toggleMagicWand();
+    processImage();
+    showToast(`Sampled background color: RGB(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`);
+  });
+
+  // Amazon Zoom Loupe Simulation
+  function handleAmzZoom(e) {
+    const stage = document.getElementById('amzStage');
+    const hero = document.getElementById('amzHero');
+    const rect = stage.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    hero.style.transformOrigin = `${x}% ${y}%`;
+    hero.style.transform = 'scale(1.8)';
+  }
+
+  function resetAmzZoom() {
+    const hero = document.getElementById('amzHero');
+    hero.style.transform = 'scale(1)';
+  }
+
+  // Export & Download
+  function downloadImage(format) {
+    const link = document.createElement('a');
+    const filename = `desk-organizer-angle-${currentAngleIndex + 1}.${format}`;
+    link.download = filename;
+
+    if (format === 'jpg') {
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+    } else {
+      link.href = canvas.toDataURL('image/png');
+    }
+    link.click();
+    showToast(`Downloaded ${filename}`);
+  }
+
+  function exportCurrentAngle(targetName) {
+    const link = document.createElement('a');
+    link.download = targetName;
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+    showToast(`Exported ${targetName}! Move it to public/products/`);
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  // Generates 5 realistic 3D-printed geometric product angles so the user can test instantly
+  function loadSample3DModel() {
+    const sampleRenderers = [
+      (c) => drawSampleOrganizerHero(c),
+      (c) => drawSampleOrganizerSide(c),
+      (c) => drawSampleOrganizerTop(c),
+      (c) => drawSampleOrganizerDetail(c),
+      (c) => drawSampleOrganizerInHand(c)
+    ];
+
+    sampleRenderers.forEach((drawFn, idx) => {
+      const c = document.createElement('canvas');
+      c.width = 800;
+      c.height = 800;
+      drawFn(c);
+
+      const img = new Image();
+      img.onload = () => {
+        angles[idx].img = img;
+        angles[idx].ready = true;
+        if (idx === 0) {
+          processImage();
+        } else {
+          processOffscreen(idx);
+        }
+      };
+      img.src = c.toDataURL();
+    });
+
+    showToast('Loaded 5 sample 3D printing angles!');
+  }
+
+  // Synthetic 3D Model Renderers for instant interactive demo
+  function drawSampleOrganizerHero(c) {
+    const g = c.getContext('2d');
+    g.fillStyle = '#e2e8f0'; // Gray unedited smartphone photo background
+    g.fillRect(0, 0, 800, 800);
+
+    // Draw Matte Black Isometric 3D Printed Geometric Organizer
+    g.save();
+    g.translate(400, 420);
+
+    // Base Shadow in raw photo
+    g.fillStyle = 'rgba(0,0,0,0.15)';
+    g.beginPath();
+    g.ellipse(0, 180, 240, 50, 0, 0, Math.PI*2);
+    g.fill();
+
+    // 3D Hexagon / Faceted Body
+    const drawFacet = (pts, fill) => {
+      g.fillStyle = fill;
+      g.beginPath();
+      g.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]);
+      g.closePath();
+      g.fill();
+      g.strokeStyle = '#1e293b';
+      g.lineWidth = 1.5;
+      g.stroke();
+    };
+
+    // Left dark facet
+    drawFacet([[-160, 40], [0, 160], [0, -40], [-160, -140]], '#1e293b');
+    // Right mid facet
+    drawFacet([[0, 160], [160, 40], [160, -140], [0, -40]], '#334155');
+    // Top light facet (organizer opening)
+    drawFacet([[-160, -140], [0, -220], [160, -140], [0, -40]], '#475569');
+
+    // Inner pen slot cavity
+    drawFacet([[-100, -130], [0, -180], [100, -130], [0, -70]], '#0f172a');
+
+    // 3D print layer lines texture simulation
+    g.strokeStyle = 'rgba(255,255,255,0.06)';
+    g.lineWidth = 1;
+    for (let y = -140; y < 160; y += 4) {
+      g.beginPath();
+      g.moveTo(-160, y);
+      g.lineTo(0, y + 100);
+      g.lineTo(160, y);
+      g.stroke();
+    }
+
+    g.restore();
+  }
+
+  function drawSampleOrganizerSide(c) {
+    const g = c.getContext('2d');
+    g.fillStyle = '#e2e8f0';
+    g.fillRect(0, 0, 800, 800);
+
+    g.save();
+    g.translate(400, 400);
+    // Side profile drawing
+    g.fillStyle = '#1e293b';
+    g.beginPath();
+    g.moveTo(-120, 160);
+    g.lineTo(140, 160);
+    g.lineTo(100, -160);
+    g.lineTo(-100, -160);
+    g.closePath();
+    g.fill();
+
+    g.fillStyle = '#334155';
+    g.fillRect(-80, -140, 140, 260);
+    g.restore();
+  }
+
+  function drawSampleOrganizerTop(c) {
+    const g = c.getContext('2d');
+    g.fillStyle = '#e2e8f0';
+    g.fillRect(0, 0, 800, 800);
+
+    g.save();
+    g.translate(400, 400);
+    g.fillStyle = '#334155';
+    g.beginPath();
+    g.arc(0, 0, 180, 0, Math.PI * 2);
+    g.fill();
+
+    // Compartments
+    g.fillStyle = '#0f172a';
+    g.beginPath();
+    g.arc(-60, -60, 60, 0, Math.PI * 2);
+    g.arc(60, -60, 50, 0, Math.PI * 2);
+    g.arc(0, 70, 70, 0, Math.PI * 2);
+    g.fill();
+    g.restore();
+  }
+
+  function drawSampleOrganizerDetail(c) {
+    const g = c.getContext('2d');
+    g.fillStyle = '#e2e8f0';
+    g.fillRect(0, 0, 800, 800);
+
+    g.save();
+    g.translate(400, 400);
+    // Extreme close up of 3D print layer texture
+    g.fillStyle = '#1e293b';
+    g.fillRect(-220, -220, 440, 440);
+
+    g.strokeStyle = '#475569';
+    g.lineWidth = 3;
+    for (let y = -200; y <= 200; y += 12) {
+      g.beginPath();
+      g.moveTo(-200, y);
+      g.lineTo(200, y);
+      g.stroke();
+    }
+    g.restore();
+  }
+
+  function drawSampleOrganizerInHand(c) {
+    const g = c.getContext('2d');
+    g.fillStyle = '#e2e8f0';
+    g.fillRect(0, 0, 800, 800);
+
+    g.save();
+    g.translate(400, 400);
+    // Minimal geometric silhouette
+    g.fillStyle = '#1e293b';
+    g.beginPath();
+    g.roundRect(-100, -100, 200, 200, 20);
+    g.fill();
+    g.restore();
+  }
+</script>

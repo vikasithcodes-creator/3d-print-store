@@ -817,7 +817,173 @@
 }
 
 /* ========================================
-   Image Manager
+   Image Upload & Gallery
+   ======================================== */
+.image-upload-zone {
+  border: 2px dashed var(--admin-border);
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  background: var(--admin-hover-bg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 24px;
+}
+
+.image-upload-zone:hover {
+  border-color: var(--admin-text-secondary);
+  background: var(--admin-card-bg);
+}
+
+.image-upload-zone--active {
+  border-color: var(--admin-text-primary);
+  background: var(--admin-card-bg);
+  border-style: solid;
+}
+
+.image-upload-zone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.image-upload-zone-content svg {
+  color: var(--admin-text-secondary);
+}
+
+.image-upload-zone-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--admin-text-primary);
+  margin: 0;
+}
+
+.image-upload-zone-hint {
+  font-size: 13px;
+  color: var(--admin-text-muted);
+  margin: 0;
+}
+
+.image-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.image-gallery-item {
+  border: 2px solid var(--admin-border);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--admin-hover-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-gallery-item-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--admin-card-bg);
+  border: 2px solid var(--admin-border);
+  position: relative;
+}
+
+.image-gallery-item-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-gallery-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-muted);
+}
+
+.image-gallery-item-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-gallery-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.image-gallery-item-index {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--admin-text-secondary);
+  min-width: 20px;
+  text-align: center;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--admin-border);
+  border-radius: 4px;
+  background: var(--admin-card-bg);
+  color: var(--admin-text-primary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background: var(--admin-text-primary);
+  color: var(--admin-card-bg);
+  border-color: var(--admin-text-primary);
+  transform: translateY(-1px);
+}
+
+.btn-icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-icon--danger {
+  color: var(--admin-error);
+  border-color: var(--admin-error-bg);
+}
+
+.btn-icon--danger:hover:not(:disabled) {
+  background: var(--admin-error);
+  color: var(--admin-card-bg);
+  border-color: var(--admin-error);
+}
+
+.image-gallery-empty {
+  grid-column: 1 / -1;
+  padding: 48px 24px;
+  text-align: center;
+  border: 2px dashed var(--admin-border);
+  border-radius: 8px;
+  background: var(--admin-hover-bg);
+}
+
+.image-gallery-empty p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--admin-text-muted);
+}
+
+/* ========================================
+   Image Manager (Legacy - keep for compatibility)
    ======================================== */
 .image-manager {
   display: flex;

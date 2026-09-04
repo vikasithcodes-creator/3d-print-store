@@ -7,7 +7,12 @@ export const products = [
     description: 'Modern geometric desk organizer with multiple compartments for pens, clips, and small items.',
     price: 1999,
     category: 'desk-accessories',
-    images: ['/products/desk-organizer.jpg'],
+    images: [
+      '/products/desk-organizer.jpg',
+      '/products/desk-organizer-2.jpg',
+      '/products/desk-organizer-3.jpg',
+      '/products/desk-organizer-4.jpg'
+    ],
     materials: ['PLA', 'PETG', 'ABS'],
     colors: ['Black', 'White', 'Gray', 'Navy Blue'],
     dimensions: '15cm × 10cm × 8cm',

@@ -95,6 +95,11 @@
   background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
 }
 
+/* Hide placeholder when image exists */
+.product-image.has-image .product-placeholder {
+  display: none;
+}
+
 .product-placeholder svg {
   margin-bottom: var(--spacing-3);
   opacity: 0.4;

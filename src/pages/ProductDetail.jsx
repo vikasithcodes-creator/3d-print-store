@@ -21,6 +21,17 @@ export default function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [isEditingPrice, setIsEditingPrice] = useState(false);
   const [newPrice, setNewPrice] = useState(product?.price || 0);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setZoomPos({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
+  };
 
   useEffect(() => {
     if (product) {
@@ -121,9 +132,49 @@ export default function ProductDetail() {
 
         <div className="product-layout page-section">
           <div className="product-gallery page-section">
-            <div className="main-image page-section">
-              {images.length > 0 && images[0] ? (
-                <img src={images[0]} alt={product.name} />
+            {/* Thumbnail strip - only show if multiple images */}
+            {images.length > 1 && (
+              <div className="thumbnail-strip page-section">
+                {images.map((image, index) => (
+                  <button
+                    key={index}
+                    className={`thumbnail ${selectedImageIndex === index ? 'thumbnail--active' : ''}`}
+                    onClick={() => setSelectedImageIndex(index)}
+                    aria-label={`View image ${index + 1}`}
+                  >
+                    {image ? (
+                      <img src={image} alt={`${product.name} angle ${index + 1}`} />
+                    ) : (
+                      <div className="thumbnail-placeholder">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                          <circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div
+              className={`main-image page-section ${isZoomed ? 'main-image--zoomed' : ''}`}
+              onMouseEnter={() => setIsZoomed(true)}
+              onMouseLeave={() => setIsZoomed(false)}
+              onMouseMove={handleMouseMove}
+              style={isZoomed && images[selectedImageIndex] ? {
+                cursor: 'zoom-in'
+              } : {}}
+            >
+              {images.length > 0 && images[selectedImageIndex] ? (
+                <img
+                  src={images[selectedImageIndex]}
+                  alt={product.name}
+                  style={isZoomed ? {
+                    transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`
+                  } : {}}
+                />
               ) : (
                 <div className="image-placeholder page-section">
                   <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
